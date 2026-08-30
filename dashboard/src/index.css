@@ -77,3 +77,91 @@ html[data-lang="bn"] .leaflet-container {
 .animate-spin-slow {
   animation: spin-slow 2.4s linear infinite;
 }
+
+/* ============ Cinematic story chrome ============ */
+
+/* Film grain — fractal noise, jittered a few times a second for a 24fps feel */
+.cin-grain {
+  position: fixed;
+  inset: -100%;
+  z-index: 38;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: cin-grain 0.7s steps(4) infinite;
+}
+@keyframes cin-grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-2%, -2%); }
+  100% { transform: translate(3%, 2%); }
+}
+
+/* Cinematic letterbox bars */
+.cin-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #000;
+  z-index: 35;
+  pointer-events: none;
+}
+
+/* Diagonal rain for the storm scenes */
+.cin-rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    108deg,
+    rgba(255, 255, 255, 0) 0 8px,
+    rgba(190, 215, 255, 0.28) 8px 9px,
+    rgba(255, 255, 255, 0) 9px 18px
+  );
+  background-size: 100% 260px;
+  animation: cin-rain-fall 0.55s linear infinite;
+}
+.cin-rain.cin-rain--slow {
+  opacity: 0.5;
+  background-size: 100% 340px;
+  animation-duration: 0.9s;
+}
+@keyframes cin-rain-fall {
+  to { background-position-y: 260px; }
+}
+.cin-rain--slow { animation-name: cin-rain-fall-slow; }
+@keyframes cin-rain-fall-slow {
+  to { background-position-y: 340px; }
+}
+
+/* Drifting light motes (desktop atmosphere only) */
+.cin-motes {
+  position: fixed;
+  inset: 0;
+  z-index: 16;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cin-mote {
+  position: absolute;
+  bottom: -4vh;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 238, 190, 0.85), rgba(255, 238, 190, 0) 70%);
+  animation: cin-rise linear infinite;
+  opacity: 0;
+}
+@keyframes cin-rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  12% { opacity: 0.65; }
+  85% { opacity: 0.4; }
+  100% { transform: translateY(-108vh) translateX(5vw); opacity: 0; }
+}
+@media (max-width: 860px) {
+  .cin-motes { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cin-grain, .cin-rain, .cin-mote { animation: none !important; }
+}

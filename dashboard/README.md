@@ -3,6 +3,14 @@
 Story-first farmer protection app. Journey: **language picker → cinematic story →
 phone/OTP login → farm setup (map, crop, inputs) → personalized advisory dashboard**.
 
+The opening story is a scroll-scrubbed "film" (technique ported from
+`lets-scroll-main`): the camera is pinned full-screen and scroll scrubs time — each
+of the 7 illustrated scenes gets a slow vertical crane + push-in, scenes
+cross-dissolve frame-to-frame as one continuous flight, with color grades per
+scene, animated rain in the storm scenes, drifting light motes, film grain and
+cinematic letterbox bars. Trimmed/optimized scene art lives in
+`public/assets/cin/`; the scrub logic is in `src/components/CinematicStory.jsx`.
+
 ## Languages
 
 The entire app is available in **English, हिन्दी, বাংলা and मराठी**. Users choose

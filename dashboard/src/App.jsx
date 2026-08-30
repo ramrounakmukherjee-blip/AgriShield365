@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LanguagePicker from "./components/LanguagePicker";
-import StoryJourney from "./components/StoryJourney";
+import CinematicStory from "./components/CinematicStory";
 import Login from "./components/Login";
 import Onboarding from "./components/Onboarding";
 import Analyzing from "./components/Analyzing";
@@ -35,6 +35,11 @@ export default function App() {
   const [phone, setPhone] = useState(() => localStorage.getItem(PHONE_KEY) || "");
   const [profile, setProfile] = useState(() => loadJSON(PROFILE_KEY));
 
+  // Each stage is its own screen; always start it at the top.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [stage]);
+
   const handleLanguageChosen = () => setStage("story");
 
   const handleVerified = (verifiedPhone) => {
@@ -67,7 +72,7 @@ export default function App() {
       return <LanguagePicker onChoose={handleLanguageChosen} />;
     case "story":
       return (
-        <StoryJourney
+        <CinematicStory
           onComplete={() => setStage("login")}
           onSkip={() => setStage("login")}
         />
