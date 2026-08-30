@@ -1,27 +1,65 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
   body {
-    @apply bg-slate-900 text-slate-100 font-sans;
     margin: 0;
     overflow-x: hidden;
+    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+      Roboto, sans-serif;
+    @apply bg-stone-50 text-stone-800 antialiased;
+  }
+  input,
+  select,
+  button,
+  textarea {
+    font-family: inherit;
   }
 }
 
-.map-container {
-  height: 250px;
-  width: 100%;
-  border-radius: 0.75rem;
-  overflow: hidden;
+.font-hindi {
+  font-family: "Noto Sans Devanagari", "Poppins", sans-serif;
 }
 
-/* Scrub engine specific styles */
-.lets-scroll-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  pointer-events: none;
+/* Leaflet map tweaks */
+.leaflet-container {
+  font-family: "Poppins", sans-serif;
+  z-index: 0;
+}
+.leaflet-control-attribution {
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Hide scrollbar on the cinematic snap scroller */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float-soft {
+  animation: float-soft 2.6s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 2.4s linear infinite;
 }

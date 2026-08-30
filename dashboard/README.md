@@ -1,16 +1,24 @@
-# React + Vite
+# AgriShield 365 — Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Story-first farmer protection app. Journey: **cinematic story → phone/OTP login →
+farm setup (map, crop, inputs) → personalized advisory dashboard**.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev      # development server
+npm run build    # production build
+npm run lint     # oxlint
+npm run preview  # preview production build
+```
 
-## React Compiler
+## Notes
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- Demo OTP code is **`1357`** (no backend in this build; sessions persist in
+  `localStorage`).
+- Farm location defaults to central India — tap/drag the map pin or press
+  **Use my GPS** during setup.
+- Insights (weather, risk, alerts, market prices) are deterministically generated
+  from the farmer's location/crop in `src/lib/agri.js`, so each demo farm is
+  stable and unique. Ready to be swapped for real API calls.
