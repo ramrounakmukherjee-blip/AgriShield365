@@ -18,16 +18,30 @@
   textarea {
     font-family: inherit;
   }
-}
 
-.font-hindi {
-  font-family: "Noto Sans Devanagari", "Poppins", sans-serif;
+  /* The whole UI switches typeface with the chosen language */
+  html[data-lang="hi"] body,
+  html[data-lang="mr"] body {
+    font-family: "Noto Sans Devanagari", "Poppins", ui-sans-serif, system-ui,
+      sans-serif;
+  }
+  html[data-lang="bn"] body {
+    font-family: "Noto Sans Bengali", "Poppins", ui-sans-serif, system-ui,
+      sans-serif;
+  }
 }
 
 /* Leaflet map tweaks */
 .leaflet-container {
   font-family: "Poppins", sans-serif;
   z-index: 0;
+}
+html[data-lang="hi"] .leaflet-container,
+html[data-lang="mr"] .leaflet-container {
+  font-family: "Noto Sans Devanagari", "Poppins", sans-serif;
+}
+html[data-lang="bn"] .leaflet-container {
+  font-family: "Noto Sans Bengali", "Poppins", sans-serif;
 }
 .leaflet-control-attribution {
   font-size: 9px;

@@ -8,18 +8,20 @@ detection, and weather/market advisories in the farmer's language, on their phon
 
 The web app tells a story first, then becomes a tool:
 
+0. **Language picker** — choose English, हिन्दी, বাংলা or मराठी; the entire app
+   (story, login, setup, dashboard, alerts and advice) is in that language, with
+   a 🌐 switcher available on every screen.
 1. **Cinematic story** — seven illustrated scenes following a farmer's journey:
    hope at sowing → thriving crop → pest shock → flood disaster → help arrives
    via smartphone → AgriShield 365 → a confident new beginning.
 2. **Farmer login** — simple phone + OTP (no passwords; demo OTP is `1357`).
 3. **Farm setup** — name, farm location (tap/drag on a map or use GPS), standing
    crop, field area, soil & irrigation details.
-4. **Dashboard** — today's advisories: weather alerts (English + Hindi),
+4. **Dashboard** — today's advisories: weather alerts,
    temperature/moisture/humidity/wind, crop growth stage & progress, a risk
    gauge, the field on a map, step-by-step recommendations, and market prices.
 
-The dashboard is **mobile-first and fully responsive**, with bilingual
-(English / हिन्दी) labels throughout.
+The dashboard is **mobile-first and fully responsive**.
 
 ## Tech stack
 

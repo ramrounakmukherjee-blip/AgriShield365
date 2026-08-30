@@ -1,7 +1,15 @@
 # AgriShield 365 — Dashboard
 
-Story-first farmer protection app. Journey: **cinematic story → phone/OTP login →
-farm setup (map, crop, inputs) → personalized advisory dashboard**.
+Story-first farmer protection app. Journey: **language picker → cinematic story →
+phone/OTP login → farm setup (map, crop, inputs) → personalized advisory dashboard**.
+
+## Languages
+
+The entire app is available in **English, हिन्दी, বাংলা and मराठी**. Users choose
+their language on the welcome screen and can switch anytime via the 🌐 button.
+The choice is persisted in `localStorage`; fonts (Noto Sans Devanagari / Bengali)
+switch automatically. All translations live in `src/lib/i18n.js`, and domain
+data labels in `src/lib/agri.js`.
 
 ## Scripts
 

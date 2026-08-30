@@ -1,12 +1,15 @@
 import { useState } from "react";
+import LanguagePicker from "./components/LanguagePicker";
 import StoryJourney from "./components/StoryJourney";
 import Login from "./components/Login";
 import Onboarding from "./components/Onboarding";
 import Analyzing from "./components/Analyzing";
 import Dashboard from "./components/Dashboard";
+import { LANGUAGES } from "./lib/i18n";
 
+const LANG_KEY = "agrishield365_lang";
 const PHONE_KEY = "agrishield365_phone";
-const PROFILE_KEY = "agrishield365_profile";
+const PROFILE_KEY = "agrishield365_profile_v2";
 
 function loadJSON(key) {
   try {
@@ -17,16 +20,26 @@ function loadJSON(key) {
   }
 }
 
+function hasSavedLanguage() {
+  try {
+    const lang = localStorage.getItem(LANG_KEY);
+    return LANGUAGES.some((l) => l.id === lang);
+  } catch {
+    return false;
+  }
+}
+
 export default function App() {
-  // story -> login -> onboarding -> analyzing -> dashboard
-  const [stage, setStage] = useState("story");
+  // welcome -> story -> login -> onboarding -> analyzing -> dashboard
+  const [stage, setStage] = useState(hasSavedLanguage() ? "story" : "welcome");
   const [phone, setPhone] = useState(() => localStorage.getItem(PHONE_KEY) || "");
   const [profile, setProfile] = useState(() => loadJSON(PROFILE_KEY));
+
+  const handleLanguageChosen = () => setStage("story");
 
   const handleVerified = (verifiedPhone) => {
     setPhone(verifiedPhone);
     localStorage.setItem(PHONE_KEY, verifiedPhone);
-    // Returning farmer with a saved farm goes straight to the dashboard.
     const saved = loadJSON(PROFILE_KEY);
     if (saved && saved.phone === verifiedPhone) {
       setProfile(saved);
@@ -45,12 +58,13 @@ export default function App() {
 
   const handleSignOut = () => {
     localStorage.removeItem(PHONE_KEY);
-    // Keep the saved farm profile so the next login is instant.
     setPhone("");
     setStage("story");
   };
 
   switch (stage) {
+    case "welcome":
+      return <LanguagePicker onChoose={handleLanguageChosen} />;
     case "story":
       return (
         <StoryJourney
@@ -59,12 +73,7 @@ export default function App() {
         />
       );
     case "login":
-      return (
-        <Login
-          onVerified={handleVerified}
-          returningName={profile?.name}
-        />
-      );
+      return <Login onVerified={handleVerified} returningName={profile?.name} />;
     case "onboarding":
       return <Onboarding onComplete={handleOnboardingComplete} />;
     case "analyzing":

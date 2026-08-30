@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Sprout, Satellite, CloudSun, Bug, LineChart } from "lucide-react";
+import { useLang } from "../lib/useLang";
 
-const STEPS = [
-  { icon: Satellite, text: "Locating your field via satellite", hi: "सैटेलाइट से खेत ढूँढा जा रहा है" },
-  { icon: CloudSun, text: "Fetching local weather forecast", hi: "मौसम की जानकारी ली जा रही है" },
-  { icon: Bug, text: "Scanning crop disease risk", hi: "फसल रोग जोखिम की जाँच हो रही है" },
-  { icon: LineChart, text: "Preparing today's advisories", hi: "आज की सलाह तैयार हो रही है" },
-];
+const STEP_ICONS = [Satellite, CloudSun, Bug, LineChart];
 
 export default function Analyzing({ onDone }) {
+  const { t } = useLang();
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const timers = STEPS.map((_, i) =>
+    const timers = STEP_ICONS.map((_, i) =>
       setTimeout(() => {
-        if (i < STEPS.length - 1) setStep(i + 1);
-      }, 550 * (i + 1))
+        if (i < STEP_ICONS.length - 1) setStep(i + 1);
+      }, 600 * (i + 1))
     );
-    const done = setTimeout(onDone, 550 * STEPS.length + 500);
+    const done = setTimeout(onDone, 600 * STEP_ICONS.length + 600);
     return () => {
       timers.forEach(clearTimeout);
       clearTimeout(done);
@@ -35,12 +32,10 @@ export default function Analyzing({ onDone }) {
         </div>
       </div>
 
-      <h1 className="text-2xl font-extrabold">Preparing your shield</h1>
-      <p className="font-hindi text-emerald-200 mt-1">आपके खेत की सुरक्षा तैयार हो रही है…</p>
+      <h1 className="text-2xl font-extrabold max-w-sm">{t("analyzing.title")}</h1>
 
       <div className="mt-8 flex flex-col gap-3 w-full max-w-sm">
-        {STEPS.map((s, i) => {
-          const Icon = s.icon;
+        {STEP_ICONS.map((Icon, i) => {
           const active = i <= step;
           return (
             <motion.div
@@ -51,11 +46,8 @@ export default function Analyzing({ onDone }) {
                 active ? "bg-white/15" : "bg-white/5"
               }`}
             >
-              <Icon className={`w-5 h-5 ${active ? "text-emerald-200" : "text-white/50"}`} />
-              <div>
-                <p className="text-sm font-semibold">{s.text}</p>
-                <p className="font-hindi text-xs text-emerald-100/80">{s.hi}</p>
-              </div>
+              <Icon className={`w-5 h-5 shrink-0 ${active ? "text-emerald-200" : "text-white/50"}`} />
+              <p className="text-sm font-semibold">{t(`analyzing.steps.${i}`)}</p>
             </motion.div>
           );
         })}

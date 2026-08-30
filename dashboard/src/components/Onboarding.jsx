@@ -21,15 +21,16 @@ import {
   Tractor,
 } from "lucide-react";
 import { CROPS, SOIL_TYPES, IRRIGATION_TYPES } from "../lib/agri";
+import { useLang } from "../lib/useLang";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const STEPS = [
-  { id: "about", label: "About you", icon: User },
-  { id: "location", label: "Your farm", icon: MapPin },
-  { id: "crop", label: "Your crop", icon: Sprout },
-  { id: "details", label: "Farm details", icon: Settings2 },
+  { id: "about", icon: User },
+  { id: "location", icon: MapPin },
+  { id: "crop", icon: Sprout },
+  { id: "details", icon: Settings2 },
 ];
 
-// Keeps the map centred on the chosen point and forwards clicks
 function MapController({ lat, lng, onPick }) {
   const map = useMap();
   useMapEvents({
@@ -61,11 +62,11 @@ function DraggableMarker({ lat, lng, onPick }) {
   );
 }
 
-function Field({ label, hi, children }) {
+function Field({ label, children }) {
   return (
     <label className="block">
       <span className="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">
-        {label} <span className="font-hindi font-semibold normal-case tracking-normal">· {hi}</span>
+        {label}
       </span>
       {children}
     </label>
@@ -76,17 +77,19 @@ const inputCls =
   "w-full rounded-2xl border-2 border-stone-200 focus:border-emerald-500 bg-white px-4 py-3.5 text-lg font-medium text-stone-800 outline-none transition placeholder:text-stone-400 placeholder:font-normal";
 
 export default function Onboarding({ onComplete }) {
+  const { t, tr } = useLang();
   const [stepIdx, setStepIdx] = useState(0);
   const [form, setForm] = useState({
     name: "",
-    lat: 23.59, // default: central India
+    lat: 23.59,
     lng: 78.96,
     village: "",
     crop: "rice",
     area: "",
+    areaUnit: "acres",
     sowingDate: "",
-    soil: SOIL_TYPES[0],
-    irrigation: IRRIGATION_TYPES[3],
+    soil: "loamy",
+    irrigation: "rainfed",
   });
 
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
@@ -117,80 +120,62 @@ export default function Onboarding({ onComplete }) {
     );
   };
 
-  const step = STEPS[stepIdx];
-
   return (
     <div className="min-h-[100dvh] bg-stone-50 flex flex-col">
-      {/* Header */}
       <header className="bg-white border-b border-stone-200 px-5 py-4 sticky top-0 z-20">
         <div className="max-w-lg mx-auto flex items-center gap-3">
-          <img
-            src="/assets/logo-agrishield365.jpg"
-            alt=""
-            className="w-10 h-10 rounded-xl object-cover"
-          />
-          <div>
-            <h1 className="font-extrabold text-stone-800 leading-tight">
-              Set up your farm
-            </h1>
-            <p className="font-hindi text-xs text-emerald-700">
-              अपने खेत की जानकारी दें
-            </p>
+          <img src="/assets/logo-agrishield365.jpg" alt="" className="w-10 h-10 rounded-xl object-cover" />
+          <div className="flex-1 min-w-0">
+            <h1 className="font-extrabold text-stone-800 leading-tight">{t("onb.title")}</h1>
           </div>
+          <LanguageSwitcher dark className="!relative" />
         </div>
 
-        {/* Stepper */}
         <div className="max-w-lg mx-auto mt-3 flex items-center gap-1.5">
           {STEPS.map((s, i) => (
-            <div key={s.id} className="flex-1 flex items-center gap-1.5">
-              <div
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  i <= stepIdx ? "bg-emerald-500" : "bg-stone-200"
-                }`}
-              />
-            </div>
+            <div
+              key={s.id}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${
+                i <= stepIdx ? "bg-emerald-500" : "bg-stone-200"
+              }`}
+            />
           ))}
         </div>
         <p className="max-w-lg mx-auto mt-2 text-xs font-semibold text-stone-500">
-          Step {stepIdx + 1} of {STEPS.length} · {step.label}
+          {t("onb.stepOf").replace("{n}", stepIdx + 1).replace("{total}", STEPS.length)} ·{" "}
+          {t(`onb.steps.${stepIdx}`)}
         </p>
       </header>
 
-      {/* Body */}
       <main className="flex-1 w-full max-w-lg mx-auto px-5 py-6">
         <AnimatePresence mode="wait">
           <motion.div
-            key={step.id}
+            key={stepIdx}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.25 }}
           >
-            {step.id === "about" && (
+            {stepIdx === 0 && (
               <div className="flex flex-col gap-5">
                 <div className="rounded-3xl bg-emerald-50 border border-emerald-100 p-5">
-                  <p className="text-emerald-900 font-semibold">
-                    Namaste! 🙏 Let's personalise AgriShield 365 for your fields.
-                  </p>
-                  <p className="font-hindi text-sm text-emerald-800 mt-1">
-                    नमस्ते! आइए, आपके खेत के हिसाब से सलाह तैयार करें।
-                  </p>
+                  <p className="text-emerald-900 font-semibold">{t("onb.welcome")}</p>
                 </div>
 
-                <Field label="Your name" hi="आपका नाम">
+                <Field label={t("onb.nameLabel")}>
                   <input
                     autoFocus
                     className={inputCls}
-                    placeholder="e.g. Ramesh Kumar"
+                    placeholder={t("onb.namePlaceholder")}
                     value={form.name}
                     onChange={(e) => set("name", e.target.value)}
                   />
                 </Field>
 
-                <Field label="Village / district (optional)" hi="गाँव / ज़िला">
+                <Field label={t("onb.villageLabel")}>
                   <input
                     className={inputCls}
-                    placeholder="e.g. near Nagpur"
+                    placeholder={t("onb.villagePlaceholder")}
                     value={form.village}
                     onChange={(e) => set("village", e.target.value)}
                   />
@@ -198,21 +183,16 @@ export default function Onboarding({ onComplete }) {
               </div>
             )}
 
-            {step.id === "location" && (
+            {stepIdx === 1 && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm text-stone-600">
-                    Tap the map or drag the pin to your field.{" "}
-                    <span className="font-hindi text-stone-500">
-                      निशान को अपने खेत पर लाएँ।
-                    </span>
-                  </p>
+                  <p className="text-sm text-stone-600">{t("onb.mapHint")}</p>
                   <button
                     onClick={useMyLocation}
                     className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-emerald-600 text-white text-sm font-bold px-4 py-2.5 hover:bg-emerald-500 active:scale-95 transition shadow"
                   >
                     <LocateFixed className="w-4 h-4" />
-                    Use my GPS
+                    {t("onb.gps")}
                   </button>
                 </div>
 
@@ -241,13 +221,13 @@ export default function Onboarding({ onComplete }) {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-2xl bg-white border border-stone-200 px-4 py-3">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                      Latitude
+                      {t("onb.lat")}
                     </p>
                     <p className="font-bold text-stone-800">{form.lat.toFixed(4)}°</p>
                   </div>
                   <div className="rounded-2xl bg-white border border-stone-200 px-4 py-3">
                     <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                      Longitude
+                      {t("onb.lng")}
                     </p>
                     <p className="font-bold text-stone-800">{form.lng.toFixed(4)}°</p>
                   </div>
@@ -255,9 +235,9 @@ export default function Onboarding({ onComplete }) {
               </div>
             )}
 
-            {step.id === "crop" && (
+            {stepIdx === 2 && (
               <div className="flex flex-col gap-5">
-                <Field label="Which crop is standing in your field?" hi="खेत में कौन सी फसल है?">
+                <Field label={t("onb.cropQuestion")}>
                   <div className="grid grid-cols-2 gap-3">
                     {CROPS.map((c) => (
                       <button
@@ -272,15 +252,14 @@ export default function Onboarding({ onComplete }) {
                       >
                         <span className="text-2xl">{c.emoji}</span>
                         <span className="flex flex-col">
-                          <span className="font-bold text-stone-800 text-sm">{c.label.split(" / ")[0]}</span>
-                          <span className="font-hindi text-xs text-stone-500">{c.hi}</span>
+                          <span className="font-bold text-stone-800 text-sm">{tr(c)}</span>
                         </span>
                       </button>
                     ))}
                   </div>
                 </Field>
 
-                <Field label="Approximate sowing date (optional)" hi="बुवाई की तारीख">
+                <Field label={t("onb.sowingLabel")}>
                   <input
                     type="date"
                     className={inputCls}
@@ -292,10 +271,10 @@ export default function Onboarding({ onComplete }) {
               </div>
             )}
 
-            {step.id === "details" && (
+            {stepIdx === 3 && (
               <div className="flex flex-col gap-5">
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Field area" hi="रकबा">
+                  <Field label={t("onb.areaLabel")}>
                     <input
                       type="number"
                       inputMode="decimal"
@@ -307,47 +286,56 @@ export default function Onboarding({ onComplete }) {
                       onChange={(e) => set("area", e.target.value)}
                     />
                   </Field>
-                  <Field label="Unit" hi="इकाई">
+                  <Field label={t("onb.areaUnit")}>
                     <select
                       className={inputCls}
-                      defaultValue="acres"
-                      aria-label="Area unit"
+                      value={form.areaUnit}
+                      onChange={(e) => set("areaUnit", e.target.value)}
                     >
-                      <option value="acres">acres / एकड़</option>
-                      <option value="bigha">bigha / बीघा</option>
-                      <option value="hectare">hectare / हेक्टेयर</option>
+                      {Object.entries({
+                        acres: t("onb.units.acres"),
+                        bigha: t("onb.units.bigha"),
+                        hectare: t("onb.units.hectare"),
+                      }).map(([id, label]) => (
+                        <option key={id} value={id}>
+                          {label}
+                        </option>
+                      ))}
                     </select>
                   </Field>
                 </div>
 
-                <Field label="Soil type" hi="मिट्टी का प्रकार">
+                <Field label={t("onb.soilLabel")}>
                   <select
                     className={inputCls}
                     value={form.soil}
                     onChange={(e) => set("soil", e.target.value)}
                   >
                     {SOIL_TYPES.map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s.id} value={s.id}>
+                        {tr(s)}
+                      </option>
                     ))}
                   </select>
                 </Field>
 
-                <Field label="Irrigation method" hi="सिंचाई का तरीका">
+                <Field label={t("onb.irrigationLabel")}>
                   <select
                     className={inputCls}
                     value={form.irrigation}
                     onChange={(e) => set("irrigation", e.target.value)}
                   >
                     {IRRIGATION_TYPES.map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s.id} value={s.id}>
+                        {tr(s)}
+                      </option>
                     ))}
                   </select>
                 </Field>
 
                 <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-900">
                   <Tractor className="inline w-4 h-4 mr-1.5 -mt-0.5" />
-                  You can change all of this later from your dashboard.{" "}
-                  <span className="font-hindi">यह जानकारी बाद में भी बदल सकते हैं।</span>
+                  {t("onb.changeLater")}
                 </div>
               </div>
             )}
@@ -355,7 +343,6 @@ export default function Onboarding({ onComplete }) {
         </AnimatePresence>
       </main>
 
-      {/* Footer nav */}
       <footer className="sticky bottom-0 bg-white/90 backdrop-blur border-t border-stone-200 px-5 py-4">
         <div className="max-w-lg mx-auto flex items-center gap-3">
           {stepIdx > 0 && (
@@ -363,7 +350,7 @@ export default function Onboarding({ onComplete }) {
               onClick={() => setStepIdx((i) => i - 1)}
               className="inline-flex items-center gap-2 rounded-2xl border-2 border-stone-200 px-5 py-3.5 font-bold text-stone-600 hover:bg-stone-50 active:scale-95 transition"
             >
-              <ArrowLeft className="w-5 h-5" /> Back
+              <ArrowLeft className="w-5 h-5" /> {t("onb.back")}
             </button>
           )}
           <button
@@ -374,12 +361,11 @@ export default function Onboarding({ onComplete }) {
             {stepIdx === STEPS.length - 1 ? (
               <>
                 <CheckCircle2 className="w-5 h-5" />
-                Show my dashboard
-                <span className="font-hindi font-semibold">· डैशबोर्ड खोलें</span>
+                {t("onb.finish")}
               </>
             ) : (
               <>
-                Continue <ArrowRight className="w-5 h-5" />
+                {t("onb.continue")} <ArrowRight className="w-5 h-5" />
               </>
             )}
           </button>
