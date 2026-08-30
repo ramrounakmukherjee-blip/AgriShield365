@@ -18,12 +18,14 @@ const SCENES = [
     w: 1.15,
     grade: "linear-gradient(180deg, rgba(255,196,96,0.14) 0%, rgba(255,150,60,0.06) 45%, rgba(10,20,10,0.05) 100%)",
     cam: { scale: [1.0, 1.07], y: [0.8, -0.8], fy: "46%" },
+    sun: true,
   },
   {
     img: "/assets/cin/scene_2.jpg",
     w: 0.95,
     grade: "linear-gradient(180deg, rgba(255,205,110,0.12) 0%, rgba(120,200,110,0.08) 55%, rgba(10,30,10,0.05) 100%)",
     cam: { scale: [1.0, 1.06], y: [0.7, -0.7], fy: "52%" },
+    sun: true,
   },
   {
     img: "/assets/cin/scene_3.jpg",
@@ -37,6 +39,8 @@ const SCENES = [
     grade: "linear-gradient(180deg, rgba(16,28,56,0.42) 0%, rgba(10,16,38,0.52) 55%, rgba(6,10,26,0.66) 100%)",
     cam: { scale: [1.0, 1.05], y: [-0.6, 0.6], fy: "46%" },
     rain: true,
+    fog: true,
+    flash: "hard",
   },
   {
     img: "/assets/cin/scene_5.jpg",
@@ -44,18 +48,22 @@ const SCENES = [
     grade: "linear-gradient(180deg, rgba(16,28,56,0.38) 0%, rgba(10,16,38,0.44) 55%, rgba(6,10,26,0.58) 100%)",
     cam: { scale: [1.0, 1.06], y: [0.7, -0.7], fy: "48%" },
     rain: "slow",
+    fog: true,
+    flash: "soft",
   },
   {
     img: "/assets/cin/scene_6.jpg",
     w: 0.9,
     grade: "linear-gradient(180deg, rgba(255,214,120,0.16) 0%, rgba(150,220,130,0.10) 55%, rgba(10,30,10,0.06) 100%)",
     cam: { scale: [1.06, 1.0], y: [-0.4, 0.4], fy: "42%" },
+    phoneGlow: true,
   },
   {
     img: "/assets/cin/scene_7.jpg",
     w: 1.3,
     grade: "linear-gradient(180deg, rgba(255,200,100,0.16) 0%, rgba(255,170,70,0.08) 50%, rgba(10,30,10,0.06) 100%)",
     cam: { scale: [1.0, 1.06], y: [0.7, 0], fy: "38%" },
+    sun: true,
   },
 ];
 
@@ -65,10 +73,12 @@ const smooth = (x) => {
   return x * x * (3 - 2 * x);
 };
 
-function FilmScene({ seg, globalProgress, index, total, copy, cta, onEnter, onSkip }) {
+function FilmScene({ seg, globalProgress, index, total, copy, cta, active, onEnter, onSkip }) {
   const eased = useTransform(globalProgress, (g) =>
     smooth(clamp01((g - seg.start) / (seg.end - seg.start)))
   );
+
+  const titleLines = copy.title.split("\n");
 
   // Crossfade: visible across the band, eased through the seams
   const opacity = useTransform(globalProgress, (g) => {
@@ -114,10 +124,18 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, onEnter, onSk
         />
         {/* Color grade */}
         <div className="absolute inset-0" style={{ background: seg.grade }} />
-        {/* Storm rain */}
+        {/* Warm sun glow on golden scenes */}
+        {seg.sun && <div className="cin-sun" />}
+        {/* Storm rain + fog + lightning */}
         {seg.rain && (
           <div className={`cin-rain ${seg.rain === "slow" ? "cin-rain--slow" : ""}`} />
         )}
+        {seg.fog && <div className="cin-fog" />}
+        {seg.flash && (
+          <div className={`cin-flash ${seg.flash === "soft" ? "cin-flash--soft" : "cin-flash--hard"}`} />
+        )}
+        {/* Glow around the phone reveal */}
+        {seg.phoneGlow && <div className="cin-phoneglow" />}
       </motion.div>
 
       <motion.div
@@ -129,25 +147,43 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, onEnter, onSk
           className="absolute inset-x-0 bottom-0 px-6 pb-[clamp(88px,13dvh,140px)]"
         >
           <div className="mx-auto w-full max-w-2xl">
-            <p
+            <motion.p
+              initial={false}
+              animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+              transition={{ duration: 0.55, delay: 0.05 }}
               className={`cin-copy-kicker text-xs sm:text-sm font-bold uppercase tracking-[0.22em] mb-3 ${
                 seg.rain ? "text-amber-300" : "text-emerald-300"
               }`}
             >
               {copy.kicker}
-            </p>
-            <h2 className="cin-copy-title text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] text-white whitespace-pre-line">
-              {copy.title}
+            </motion.p>
+            <h2 className="cin-copy-title cin-title-serif text-3xl sm:text-5xl lg:text-[4.2rem] leading-[1.05] text-white">
+              {titleLines.map((line, li) => (
+                <span key={li} className="cin-reveal">
+                  <motion.span
+                    initial={false}
+                    animate={active ? { y: "0%" } : { y: "110%" }}
+                    transition={{ duration: 0.7, delay: 0.18 + li * 0.14, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
             </h2>
-            <p className="cin-copy-body mt-4 text-sm sm:text-lg leading-relaxed text-white/95 max-w-xl">
+            <motion.p
+              initial={false}
+              animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+              transition={{ duration: 0.6, delay: 0.18 + titleLines.length * 0.14 }}
+              className="cin-copy-body mt-4 text-sm sm:text-lg leading-relaxed text-white/95 max-w-xl"
+            >
               {copy.body}
-            </p>
+            </motion.p>
 
             {index === total - 1 && (
               <div className="pointer-events-auto mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <button
                   onClick={onEnter}
-                  className="animate-float-soft inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition px-8 py-4 text-base sm:text-lg font-bold text-white shadow-2xl shadow-emerald-950/50"
+                  className="cin-cta-shine animate-float-soft inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition px-8 py-4 text-base sm:text-lg font-bold text-white shadow-2xl shadow-emerald-950/50"
                 >
                   <Sprout className="w-5 h-5" />
                   {cta.enter}
@@ -210,6 +246,7 @@ export default function CinematicStory({ onComplete, onSkip }) {
             globalProgress={scrollYProgress}
             index={i}
             total={SEGMENTS.length}
+            active={active === i}
             copy={{
               kicker: t(`story.kickers.${i}`),
               title: t(`story.titles.${i}`),
@@ -258,22 +295,46 @@ export default function CinematicStory({ onComplete, onSkip }) {
         {/* Film grain */}
         <div className="cin-grain" />
 
-        {/* Letterbox bars */}
-        <div className="cin-bar top-0" style={{ height: "6.2dvh" }} />
-        <div className="cin-bar bottom-0" style={{ height: "6.2dvh" }} />
+        {/* Letterbox bars — sweep open like a theatre curtain on mount */}
+        <motion.div
+          className="cin-bar top-0"
+          initial={{ height: "50dvh" }}
+          animate={{ height: "6.2dvh" }}
+          transition={{ duration: 1.5, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
+        />
+        <motion.div
+          className="cin-bar bottom-0"
+          initial={{ height: "50dvh" }}
+          animate={{ height: "6.2dvh" }}
+          transition={{ duration: 1.5, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
+        />
 
         {/* Top UI */}
         <div
-          className="fixed top-0 inset-x-0 z-40 flex items-center justify-between gap-2 px-4 py-3"
-          style={{ paddingTop: "calc(0.9rem + env(safe-area-inset-top))" }}
+          className="fixed top-0 inset-x-0 z-40 flex items-center justify-between gap-2 px-4 py-2.5"
+          style={{ paddingTop: "calc(0.7rem + env(safe-area-inset-top))" }}
         >
-          <div className="flex items-center gap-2 text-white/85">
-            <Sprout className="w-4 h-4 text-emerald-400" />
-            <span className="text-[11px] sm:text-xs font-bold tracking-[0.28em] uppercase">
+          <motion.div
+            className="flex items-center gap-2.5"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+          >
+            <img
+              src="/assets/logo-agrishield365.jpg"
+              alt="AgriShield 365"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover ring-1 ring-white/25 shadow-lg"
+            />
+            <span className="text-[11px] sm:text-sm font-extrabold tracking-[0.16em] uppercase text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
               {t("story.brand")}
             </span>
-          </div>
-          <div className="flex items-center gap-2">
+          </motion.div>
+          <motion.div
+            className="flex items-center gap-2"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+          >
             <LanguageSwitcher dark />
             <button
               onClick={onSkip}
@@ -282,7 +343,7 @@ export default function CinematicStory({ onComplete, onSkip }) {
               <SkipForward className="w-4 h-4" />
               {t("storyCta.skip")}
             </button>
-          </div>
+          </motion.div>
         </div>
 
         {/* Progress bar */}
