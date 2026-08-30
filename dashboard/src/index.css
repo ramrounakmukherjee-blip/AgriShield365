@@ -109,6 +109,38 @@ html[data-lang="bn"] .leaflet-container {
   pointer-events: none;
 }
 
+/* Story copy — hard text shadows keep words legible over any frame */
+.cin-copy-title {
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.9),
+    0 6px 28px rgba(0, 0, 0, 0.75);
+}
+.cin-copy-body {
+  text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.9),
+    0 4px 18px rgba(0, 0, 0, 0.7);
+}
+.cin-copy-kicker {
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* Scene image framing:
+   - Phones (portrait): show the COMPLETE painting (contain), centered, with
+     black bars — nothing is ever cropped, and the bars double as clean space
+     for the story text.
+   - Larger screens: gentle cover fill anchored to each scene's focal point
+     (--fx/--fy), so faces never get cropped on wide displays either. */
+.cin-img {
+  object-fit: contain;
+  object-position: center;
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  .cin-img {
+    object-fit: cover;
+    object-position: var(--fx, 50%) var(--fy, 50%);
+  }
+}
+
 /* Diagonal rain for the storm scenes */
 .cin-rain {
   position: absolute;

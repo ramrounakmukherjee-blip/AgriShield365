@@ -7,50 +7,55 @@ import LanguageSwitcher from "./LanguageSwitcher";
 // Per-scene camera + grade metadata. Scroll scrubs the "film": each scene gets
 // a vertical crane + push-in move, and scenes cross-dissolve frame to frame
 // like one continuous camera flight (technique from lets-scroll-main).
+// Camera note: scales stay at ~1.0 so the full painting always reads; the
+// tiny crane move (y) gives life without cropping. fy (desktop cover, which
+// crops top/bottom of the square art) biases the crop UPWARD so heads and
+// faces are always kept — foreground grass/feet are the first thing cropped.
+// Phones show the entire painting letterboxed (see .cin-img in index.css).
 const SCENES = [
   {
     img: "/assets/cin/scene_1.jpg",
     w: 1.15,
     grade: "linear-gradient(180deg, rgba(255,196,96,0.14) 0%, rgba(255,150,60,0.06) 45%, rgba(10,20,10,0.05) 100%)",
-    cam: { scale: [1.3, 1.12], y: [3.5, -2], oy: "62%" },
+    cam: { scale: [1.0, 1.07], y: [0.8, -0.8], fy: "46%" },
   },
   {
     img: "/assets/cin/scene_2.jpg",
     w: 0.95,
     grade: "linear-gradient(180deg, rgba(255,205,110,0.12) 0%, rgba(120,200,110,0.08) 55%, rgba(10,30,10,0.05) 100%)",
-    cam: { scale: [1.24, 1.1], y: [2.5, -1.5], oy: "60%" },
+    cam: { scale: [1.0, 1.06], y: [0.7, -0.7], fy: "52%" },
   },
   {
     img: "/assets/cin/scene_3.jpg",
     w: 1.05,
     grade: "linear-gradient(180deg, rgba(180,150,90,0.08) 0%, rgba(60,70,50,0.12) 55%, rgba(15,20,15,0.14) 100%)",
-    cam: { scale: [1.16, 1.34], y: [1, -1], oy: "52%", ox: "58%" },
+    cam: { scale: [1.0, 1.06], y: [0.4, -0.7], fy: "52%" },
   },
   {
     img: "/assets/cin/scene_4.jpg",
     w: 1.2,
     grade: "linear-gradient(180deg, rgba(16,28,56,0.42) 0%, rgba(10,16,38,0.52) 55%, rgba(6,10,26,0.66) 100%)",
-    cam: { scale: [1.14, 1.26], y: [-2.5, 2.5], oy: "50%" },
+    cam: { scale: [1.0, 1.05], y: [-0.6, 0.6], fy: "46%" },
     rain: true,
   },
   {
     img: "/assets/cin/scene_5.jpg",
     w: 1.05,
     grade: "linear-gradient(180deg, rgba(16,28,56,0.38) 0%, rgba(10,16,38,0.44) 55%, rgba(6,10,26,0.58) 100%)",
-    cam: { scale: [1.2, 1.34], y: [2.5, -2.5], oy: "54%", ox: "62%" },
+    cam: { scale: [1.0, 1.06], y: [0.7, -0.7], fy: "48%" },
     rain: "slow",
   },
   {
     img: "/assets/cin/scene_6.jpg",
     w: 0.9,
     grade: "linear-gradient(180deg, rgba(255,214,120,0.16) 0%, rgba(150,220,130,0.10) 55%, rgba(10,30,10,0.06) 100%)",
-    cam: { scale: [1.32, 1.1], y: [-1.5, 2], oy: "50%", ox: "42%" },
+    cam: { scale: [1.06, 1.0], y: [-0.4, 0.4], fy: "42%" },
   },
   {
     img: "/assets/cin/scene_7.jpg",
     w: 1.3,
     grade: "linear-gradient(180deg, rgba(255,200,100,0.16) 0%, rgba(255,170,70,0.08) 50%, rgba(10,30,10,0.06) 100%)",
-    cam: { scale: [1.12, 1.22], y: [2, 0], oy: "56%" },
+    cam: { scale: [1.0, 1.06], y: [0.7, 0], fy: "38%" },
   },
 ];
 
@@ -99,12 +104,12 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, onEnter, onSk
           alt=""
           loading={index < 2 ? "eager" : "lazy"}
           decoding="async"
-          className="absolute inset-0 h-full w-full"
+          className="cin-img absolute inset-0 h-full w-full"
           style={{
-            objectFit: "cover",
-            objectPosition: `${seg.cam.ox || "50%"} ${seg.cam.oy || "50%"}`,
             scale,
             y,
+            "--fx": seg.cam.fx || "50%",
+            "--fy": seg.cam.fy || "50%",
           }}
         />
         {/* Color grade */}
@@ -121,20 +126,20 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, onEnter, onSk
       >
         <motion.div
           style={{ y: copyY }}
-          className="absolute inset-x-0 bottom-0 px-6 pb-[clamp(104px,17dvh,160px)]"
+          className="absolute inset-x-0 bottom-0 px-6 pb-[clamp(88px,13dvh,140px)]"
         >
           <div className="mx-auto w-full max-w-2xl">
             <p
-              className={`text-xs sm:text-sm font-bold uppercase tracking-[0.22em] mb-3 drop-shadow-lg ${
+              className={`cin-copy-kicker text-xs sm:text-sm font-bold uppercase tracking-[0.22em] mb-3 ${
                 seg.rain ? "text-amber-300" : "text-emerald-300"
               }`}
             >
               {copy.kicker}
             </p>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] text-white whitespace-pre-line drop-shadow-[0_3px_24px_rgba(0,0,0,0.65)]">
+            <h2 className="cin-copy-title text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] text-white whitespace-pre-line">
               {copy.title}
             </h2>
-            <p className="mt-4 text-sm sm:text-lg leading-relaxed text-white/90 drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)] max-w-xl">
+            <p className="cin-copy-body mt-4 text-sm sm:text-lg leading-relaxed text-white/95 max-w-xl">
               {copy.body}
             </p>
 
@@ -218,10 +223,10 @@ export default function CinematicStory({ onComplete, onSkip }) {
 
         {/* Bottom scrim for copy legibility */}
         <div
-          className="fixed inset-x-0 bottom-0 h-[46%] z-20 pointer-events-none"
+          className="fixed inset-x-0 bottom-0 h-[60%] z-20 pointer-events-none"
           style={{
             background:
-              "linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.35) 45%, transparent 100%)",
+              "linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 38%, rgba(0,0,0,0.15) 70%, transparent 100%)",
           }}
         />
         {/* Vignette */}
