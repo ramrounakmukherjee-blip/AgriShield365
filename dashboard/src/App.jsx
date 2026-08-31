@@ -7,7 +7,7 @@ import Analyzing from "./components/Analyzing";
 import AppShell from "./components/app/AppShell";
 import { LANGUAGES } from "./lib/i18n";
 import { getProfile, saveProfile, getPhone, savePhone } from "./lib/api";
-import { stopSpeaking } from "./lib/useVoice";
+import { stopSpeaking, warmVoices } from "./lib/useVoice";
 
 const LANG_KEY = "agrishield365_lang";
 
@@ -29,6 +29,12 @@ export default function App() {
     window.scrollTo(0, 0);
     stopSpeaking();
   }, [stage]);
+
+  // Load the browser's TTS voice list as early as possible (it loads
+  // asynchronously in Chrome/Edge) so the first Listen tap works.
+  useEffect(() => {
+    warmVoices();
+  }, []);
 
   const handleLanguageChosen = () => setStage("story");
 

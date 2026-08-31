@@ -186,6 +186,12 @@ const t = {
       bn: "ভয়েস শোনার সুবিধা এখন ইংরেজি ও হিন্দিতে আছে। বাংলা ও মারাঠি ভয়েস এখনো তৈরি হচ্ছে।",
       mr: "व्हॉइस ऐकण्याची सुविधा सध्या इंग्रजी आणि हिंदीत उपलब्ध आहे. बंगाली व मराठी व्हॉइस विकसित होत आहेत.",
     },
+    listenNoVoice: {
+      en: "This browser/device has no Hindi voice installed. Try Chrome or Edge on a phone/desktop with Google voices, or switch the app to English.",
+      hi: "इस ब्राउज़र/डिवाइस में हिन्दी वॉइस इंस्टॉल नहीं है। कृपया Chrome/Edge इस्तेमाल करें या ऐप को अंग्रेज़ी में करें।",
+      bn: "এই ব্রাউজার/ডিভাইসে হিন্দি ভয়েস নেই। Chrome/Edge ব্যবহার করুন অথবা অ্যাপ ইংরেজিতে করুন।",
+      mr: "या ब्राउझर/डिव्हाइसमध्ये हिंदी व्हॉइस नाही. Chrome/Edge वापरा किंवा अ‍ॅप इंग्रजीत करा.",
+    },
     inDays: { en: "in {n}d", hi: "{n} दिन में", bn: "{n} দিনে", mr: "{n} दिवसांत" },
     today: { en: "Today", hi: "आज", bn: "আজ", mr: "आज" },
     tomorrow: { en: "Tomorrow", hi: "कल", bn: "আগামীকাল", mr: "उद्या" },
