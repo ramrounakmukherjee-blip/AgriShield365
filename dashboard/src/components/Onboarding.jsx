@@ -84,7 +84,7 @@ export default function Onboarding({ onComplete }) {
     lat: 23.59,
     lng: 78.96,
     village: "",
-    crop: "rice",
+    crop: "paddy",
     area: "",
     areaUnit: "acres",
     sowingDate: "",
@@ -252,7 +252,8 @@ export default function Onboarding({ onComplete }) {
                       >
                         <span className="text-2xl">{c.emoji}</span>
                         <span className="flex flex-col">
-                          <span className="font-bold text-stone-800 text-sm">{tr(c)}</span>
+                          <span className="font-bold text-stone-800 text-sm">{tr(c.name)}</span>
+                          <span className="text-[11px] text-stone-400 font-medium">📍 {tr(c.region)}</span>
                         </span>
                       </button>
                     ))}

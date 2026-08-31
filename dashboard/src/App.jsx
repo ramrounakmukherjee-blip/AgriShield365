@@ -4,51 +4,41 @@ import CinematicStory from "./components/CinematicStory";
 import Login from "./components/Login";
 import Onboarding from "./components/Onboarding";
 import Analyzing from "./components/Analyzing";
-import Dashboard from "./components/Dashboard";
+import AppShell from "./components/app/AppShell";
 import { LANGUAGES } from "./lib/i18n";
+import { getProfile, saveProfile, getPhone, savePhone } from "./lib/api";
+import { stopSpeaking } from "./lib/useVoice";
 
 const LANG_KEY = "agrishield365_lang";
-const PHONE_KEY = "agrishield365_phone";
-const PROFILE_KEY = "agrishield365_profile_v2";
-
-function loadJSON(key) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
 
 function hasSavedLanguage() {
   try {
-    const lang = localStorage.getItem(LANG_KEY);
-    return LANGUAGES.some((l) => l.id === lang);
+    return LANGUAGES.some((l) => l.id === localStorage.getItem(LANG_KEY));
   } catch {
     return false;
   }
 }
 
 export default function App() {
-  // welcome -> story -> login -> onboarding -> analyzing -> dashboard
+  // welcome -> story -> login -> onboarding -> analyzing -> app
   const [stage, setStage] = useState(hasSavedLanguage() ? "story" : "welcome");
-  const [phone, setPhone] = useState(() => localStorage.getItem(PHONE_KEY) || "");
-  const [profile, setProfile] = useState(() => loadJSON(PROFILE_KEY));
+  const [phone, setPhone] = useState(() => getPhone());
+  const [profile, setProfile] = useState(() => getProfile());
 
-  // Each stage is its own screen; always start it at the top.
   useEffect(() => {
     window.scrollTo(0, 0);
+    stopSpeaking();
   }, [stage]);
 
   const handleLanguageChosen = () => setStage("story");
 
   const handleVerified = (verifiedPhone) => {
     setPhone(verifiedPhone);
-    localStorage.setItem(PHONE_KEY, verifiedPhone);
-    const saved = loadJSON(PROFILE_KEY);
+    savePhone(verifiedPhone);
+    const saved = getProfile();
     if (saved && saved.phone === verifiedPhone) {
       setProfile(saved);
-      setStage("dashboard");
+      setStage("app");
     } else {
       setStage("onboarding");
     }
@@ -57,12 +47,17 @@ export default function App() {
   const handleOnboardingComplete = (farm) => {
     const full = { ...farm, phone };
     setProfile(full);
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(full));
+    saveProfile(full);
     setStage("analyzing");
   };
 
+  const handleProfileChange = (updated) => {
+    setProfile(updated);
+    saveProfile(updated);
+  };
+
   const handleSignOut = () => {
-    localStorage.removeItem(PHONE_KEY);
+    localStorage.removeItem("agrishield365_phone");
     setPhone("");
     setStage("story");
   };
@@ -82,9 +77,16 @@ export default function App() {
     case "onboarding":
       return <Onboarding onComplete={handleOnboardingComplete} />;
     case "analyzing":
-      return <Analyzing onDone={() => setStage("dashboard")} />;
-    case "dashboard":
-      return <Dashboard profile={profile} onSignOut={handleSignOut} />;
+      return <Analyzing onDone={() => setStage("app")} />;
+    case "app":
+      return (
+        <AppShell
+          profile={profile}
+          onSignOut={handleSignOut}
+          onProfileChange={handleProfileChange}
+          onResetSetup={() => setStage("onboarding")}
+        />
+      );
     default:
       return null;
   }
