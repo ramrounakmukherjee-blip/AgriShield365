@@ -283,6 +283,10 @@ html[data-lang="bn"] .leaflet-container {
 .cin-reveal {
   display: block;
   overflow: hidden;
+  /* Extra room inside the mask so ascenders/descenders of the serif italics
+     are never clipped; negative margin keeps the visual line position. */
+  padding: 0.16em 0.06em 0.18em;
+  margin: -0.16em -0.06em -0.18em;
 }
 .cin-reveal > span {
   display: inline-block;

@@ -17,27 +17,27 @@ const SCENES = [
     img: "/assets/cin/scene_1.jpg",
     w: 1.15,
     grade: "linear-gradient(180deg, rgba(255,196,96,0.14) 0%, rgba(255,150,60,0.06) 45%, rgba(10,20,10,0.05) 100%)",
-    cam: { scale: [1.0, 1.07], y: [0.8, -0.8], fy: "46%" },
+    cam: { scale: [1.0, 1.05], y: [-0.2, 0.4], fy: "26%" },
     sun: true,
   },
   {
     img: "/assets/cin/scene_2.jpg",
     w: 0.95,
     grade: "linear-gradient(180deg, rgba(255,205,110,0.12) 0%, rgba(120,200,110,0.08) 55%, rgba(10,30,10,0.05) 100%)",
-    cam: { scale: [1.0, 1.06], y: [0.7, -0.7], fy: "52%" },
+    cam: { scale: [1.0, 1.05], y: [0.4, -0.4], fy: "34%" },
     sun: true,
   },
   {
     img: "/assets/cin/scene_3.jpg",
     w: 1.05,
     grade: "linear-gradient(180deg, rgba(180,150,90,0.08) 0%, rgba(60,70,50,0.12) 55%, rgba(15,20,15,0.14) 100%)",
-    cam: { scale: [1.0, 1.06], y: [0.4, -0.7], fy: "52%" },
+    cam: { scale: [1.0, 1.05], y: [0.3, -0.4], fy: "32%" },
   },
   {
     img: "/assets/cin/scene_4.jpg",
     w: 1.2,
     grade: "linear-gradient(180deg, rgba(16,28,56,0.42) 0%, rgba(10,16,38,0.52) 55%, rgba(6,10,26,0.66) 100%)",
-    cam: { scale: [1.0, 1.05], y: [-0.6, 0.6], fy: "46%" },
+    cam: { scale: [1.0, 1.04], y: [-0.4, 0.4], fy: "30%" },
     rain: true,
     fog: true,
     flash: "hard",
@@ -46,7 +46,7 @@ const SCENES = [
     img: "/assets/cin/scene_5.jpg",
     w: 1.05,
     grade: "linear-gradient(180deg, rgba(16,28,56,0.38) 0%, rgba(10,16,38,0.44) 55%, rgba(6,10,26,0.58) 100%)",
-    cam: { scale: [1.0, 1.06], y: [0.7, -0.7], fy: "48%" },
+    cam: { scale: [1.0, 1.05], y: [0.4, -0.4], fy: "34%" },
     rain: "slow",
     fog: true,
     flash: "soft",
@@ -55,14 +55,14 @@ const SCENES = [
     img: "/assets/cin/scene_6.jpg",
     w: 0.9,
     grade: "linear-gradient(180deg, rgba(255,214,120,0.16) 0%, rgba(150,220,130,0.10) 55%, rgba(10,30,10,0.06) 100%)",
-    cam: { scale: [1.06, 1.0], y: [-0.4, 0.4], fy: "42%" },
+    cam: { scale: [1.04, 1.0], y: [-0.2, 0.3], fy: "18%" },
     phoneGlow: true,
   },
   {
     img: "/assets/cin/scene_7.jpg",
     w: 1.3,
     grade: "linear-gradient(180deg, rgba(255,200,100,0.16) 0%, rgba(255,170,70,0.08) 50%, rgba(10,30,10,0.06) 100%)",
-    cam: { scale: [1.0, 1.06], y: [0.7, 0], fy: "38%" },
+    cam: { scale: [1.0, 1.04], y: [-0.2, 0.3], fy: "24%" },
     sun: true,
   },
 ];
@@ -80,9 +80,10 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, active, onEnt
 
   const titleLines = copy.title.split("\n");
 
-  // Crossfade: visible across the band, eased through the seams
+  // Crossfade: quick crisp dissolve only right at the seams so each frame
+  // settles before its copy comes up (no text on a mixed/next frame).
   const opacity = useTransform(globalProgress, (g) => {
-    const fade = 0.055;
+    const fade = 0.028;
     if (g < seg.start) return smooth(clamp01(1 - (seg.start - g) / fade));
     if (g > seg.end) return smooth(clamp01(1 - (g - seg.end) / fade));
     return 1;
@@ -92,14 +93,18 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, active, onEnt
   const scale = useTransform(eased, [0, 1], seg.cam.scale);
   const y = useTransform(eased, [0, 1], seg.cam.y.map((v) => v + "vh"));
 
-  // Copy timing: first scene greets on landing, last holds for the CTA,
-  // middle scenes peak mid-band and fade at both edges
+  // Copy timing — a broad PLATEAU so the text sits on the settled frame and
+  // only fades during the short seam (prevents copy popping onto the next
+  // scene's image). First scene greets on landing; last holds for the CTA.
+  const edge = 0.22; // fraction of a band spent fading in/out
   const copyOpacity = useTransform(globalProgress, (g) => {
     const p = clamp01((g - seg.start) / (seg.end - seg.start));
-    if (index === 0) return g > seg.end ? 0 : smooth(1 - p / 0.55);
-    if (index === total - 1) return g < seg.start ? 0 : smooth(p / 0.32);
+    if (index === 0) return g > seg.end ? 0 : smooth(clamp01(1 - (p - edge) / edge));
+    if (index === total - 1) return g < seg.start ? 0 : smooth(clamp01(p / edge));
     if (g < seg.start || g > seg.end) return 0;
-    return smooth(1 - Math.abs(p - 0.5) / 0.5);
+    if (p < edge) return smooth(p / edge);
+    if (p > 1 - edge) return smooth((1 - p) / edge);
+    return 1;
   });
   const copyY = useTransform(globalProgress, (g) => {
     const p = clamp01((g - seg.start) / (seg.end - seg.start));
@@ -157,7 +162,7 @@ function FilmScene({ seg, globalProgress, index, total, copy, cta, active, onEnt
             >
               {copy.kicker}
             </motion.p>
-            <h2 className="cin-copy-title cin-title-serif text-3xl sm:text-5xl lg:text-[4.2rem] leading-[1.05] text-white">
+            <h2 className="cin-copy-title cin-title-serif text-3xl sm:text-5xl lg:text-[4.2rem] leading-[1.16] text-white">
               {titleLines.map((line, li) => (
                 <span key={li} className="cin-reveal">
                   <motion.span
