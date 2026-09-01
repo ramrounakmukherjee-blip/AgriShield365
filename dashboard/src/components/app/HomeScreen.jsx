@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertTriangle,
   Info,
@@ -10,9 +11,11 @@ import {
   Wind,
   ShieldCheck,
   CheckCircle2,
+  Stethoscope,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
+import DiagnoseModal from "./DiagnoseModal";
 import { weatherEmoji } from "../../lib/weather";
 import { getImpactStats } from "../../lib/api";
 
@@ -33,6 +36,7 @@ export default function HomeScreen({ profile, weather, advisories }) {
   const { alerts, crop, stage } = advisories;
   const cur = weather.current;
   const stats = getImpactStats();
+  const [showDiagnose, setShowDiagnose] = useState(false);
 
   const highest = alerts.reduce((m, a) => {
     if (a.kind === "critical") return Math.max(m, 90);
@@ -112,6 +116,25 @@ export default function HomeScreen({ profile, weather, advisories }) {
           </div>
         )}
       </section>
+
+      {/* Symptom checker entry (option 6) */}
+      <motion.button
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        onClick={() => setShowDiagnose(true)}
+        className="w-full text-left rounded-2xl border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 p-4 flex items-center gap-3 hover:border-emerald-400 hover:shadow-md transition active:scale-[0.99] group"
+      >
+        <div className="w-12 h-12 shrink-0 rounded-2xl bg-emerald-600 text-white grid place-items-center group-hover:scale-105 transition">
+          <Stethoscope className="w-6 h-6" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-extrabold text-emerald-900 text-sm sm:text-base">{t("diag.entryTitle")}</p>
+          <p className="text-xs text-emerald-700/80 mt-0.5 leading-snug">{t("diag.entrySub")}</p>
+        </div>
+        <span className="shrink-0 rounded-full bg-emerald-600 text-white text-xs font-bold px-4 py-2">
+          {t("diag.entryCta")}
+        </span>
+      </motion.button>
 
       {/* Metrics */}
       <section>
@@ -207,6 +230,11 @@ export default function HomeScreen({ profile, weather, advisories }) {
           ))}
         </div>
       </section>
+
+      {/* Symptom checker modal */}
+      <AnimatePresence>
+        {showDiagnose && <DiagnoseModal crop={crop} onClose={() => setShowDiagnose(false)} />}
+      </AnimatePresence>
     </div>
   );
 }

@@ -271,6 +271,31 @@ const t = {
     installHint: { en: "Add AgriShield 365 to your home screen for offline use.", hi: "ऑफ़लाइन उपयोग के लिए एग्रीशील्ड 365 होम स्क्रीन पर जोड़ें।", bn: "অফলাইন ব্যবহারের জন্য অ্যাগ্রিশিল্ড 365 হোম স্ক্রিনে যোগ করুন।", mr: "ऑफलाइन वापरासाठी अ‍ॅग्रिशील्ड 365 होम स्क्रीनवर जोडा." },
     ready: { en: "App ready offline", hi: "ऐप ऑफ़लाइन तैयार", bn: "অ্যাপ অফলাইনে প্রস্তুত", mr: "अ‍ॅप ऑफलाइन तयार" },
   },
+
+  // ---- Symptom checker (option 6) ----
+  diag: {
+    entryTitle: { en: "Something wrong with your crop?", hi: "फसल में कुछ गड़बड़ दिख रही है?", bn: "ফসলে কিছু সমস্যা দেখছেন?", mr: "पिकात काहीतरी बिघडलेय?" },
+    entrySub: { en: "Tap the symptoms you see — get the likely cause & what to do. Works offline.", hi: "जो लक्षण दिखें उन्हें टैप करें — संभावित कारण और उपाय जानें। ऑफ़लाइन चलता है।", bn: "যা লক্ষণ দেখছেন তাতে ট্যাপ করুন — সম্ভাব্য কারণ ও করণীয় জানুন। অফলাইনে চলে।", mr: "दिसणारी लक्षणे टॅप करा — संभाव्य कारण व उपाय जाणून घ्या. ऑफलाइन चालते." },
+    entryCta: { en: "Diagnose now", hi: "अभी जाँच करें", bn: "এখনই নির্ণয় করুন", mr: "आता तपासा" },
+    title: { en: "Diagnose your crop", hi: "अपनी फसल की जाँच", bn: "আপনার ফসল নির্ণয়", mr: "तुमच्या पिकाची तपासणी" },
+    confirmCrop: { en: "We are checking:", hi: "हम जाँच कर रहे हैं:", bn: "আমরা যাচাই করছি:", mr: "आम्ही तपासत आहोत:" },
+    pickHint: { en: "Tap everything you see — you can leave any question blank.", hi: "जो दिखे उसे टैप करें — कोई सवाल खाली भी छोड़ सकते हैं।", bn: "যা দেখছেন তাতে ট্যাপ করুন — যেকোনো প্রশ্ন খালি রাখতে পারেন।", mr: "जे दिसते ते टॅप करा — कोणताही प्रश्न रिकामा ठेवू शकता." },
+    next: { en: "Next", hi: "आगे", bn: "পরবর্তী", mr: "पुढे" },
+    back: { en: "Back", hi: "वापस", bn: "পেছনে", mr: "मागे" },
+    seeResult: { en: "See result", hi: "परिणाम देखें", bn: "ফলাফল দেখুন", mr: "निकाल पहा" },
+    start: { en: "Start", hi: "शुरू करें", bn: "শুরু করুন", mr: "सुरुवात करा" },
+    result: { en: "Likely cause", hi: "संभावित कारण", bn: "সম্ভাব্য কারণ", mr: "संभाव्य कारण" },
+    match: { en: "match", hi: "मेल", bn: "মিল", mr: "जुळले" },
+    alsoPossible: { en: "Also possible", hi: "यह भी संभव", bn: "এটাও সম্ভব", mr: "हे देखील शक्य" },
+    signsMatched: { en: "Signs that matched", hi: "मिलते-जुलते लक्षण", bn: "মিলে যাওয়া লক্ষণ", mr: "जुळणारी लक्षणे" },
+    whatToDo: { en: "What to do", hi: "क्या करें", bn: "করণীয়", mr: "काय करावे" },
+    inconclusiveTitle: { en: "No clear match yet", hi: "अभी स्पष्ट नतीजा नहीं", bn: "এখনও স্পষ্ট ফল নেই", mr: "अद्याप स्पष्ट निकाल नाही" },
+    inconclusiveBody: { en: "The symptoms don't clearly match a known threat. Watch the field for 2–3 days, especially after rain, and re-check. Your weather alerts will warn you early.", hi: "लक्षण किसी ज्ञात बीमारी से स्पष्ट रूप से मेल नहीं खाते। 2–3 दिन खेत पर नज़र रखें (खासकर बारिश के बाद) और फिर जाँचें। मौसम अलर्ट पहले ही चेतावनी देंगे।", bn: "লক্ষণগুলো কোনো পরিচিত সমস্যার সঙ্গে স্পষ্ট মিলছে না। ২–৩ দিন মাঠে নজর রাখুন (বিশেষত বৃষ্টির পরে), তারপর আবার যাচাই করুন। আবহাওয়া সতর্কতা আগেই জানাবে।", mr: "लक्षणे कोणत्याही ज्ञात रोगाशी स्पष्ट जुळत नाहीत. २–३ दिवस शेतावर लक्ष ठेवा (विशेषतः पावसानंतर) आणि पुन्हा तपासा. हवामान इशारे आधीच कळवतील." },
+    disclaimer: { en: "Advisory screening only — always confirm with your local KVK / agriculture officer before spraying.", hi: "यह केवळ सलाह-स्क्रीनिंग है — दवाई छिड़कने से पहले स्थानीय KVK / कृषि अधिकारी से ज़रूर पुष्टि करें।", bn: "এটি শুধু পরামর্শ-স্ক্রিনিং — ওষুধ স্প্রে করার আগে স্থানীয় কৃষি বিজ্ঞান কেন্দ্র/কৃষি অফিসারের সঙ্গে নিশ্চিত করুন।", mr: "हे केवळ सल्ला-स्क्रीनिंग आहे — फवारणी करण्यापूर्वी स्थानिक KVK / कृषी अधिकाऱ्यांची खात्री करा." },
+    restart: { en: "Check again", hi: "फिर से जाँचें", bn: "আবার যাচাই করুন", mr: "पुन्हा तपासा" },
+    close: { en: "Done", hi: "ठीक है", bn: "সমাপ্ত", mr: "पूर्ण" },
+    listened: { en: "Listen", hi: "सुनें", bn: "শুনুন", mr: "ऐका" },
+  },
 };
 
 export default t;
