@@ -158,7 +158,7 @@ export default function Login({ onVerified, returningName }) {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                   onKeyDown={(e) => e.key === "Enter" && verifyOtp()}
-                  placeholder="• • • •"
+                  placeholder="• • • • • •"
                   className="w-full bg-transparent outline-none text-2xl font-bold tracking-[0.5em] text-stone-800 placeholder:text-stone-300"
                 />
               </div>
@@ -167,7 +167,7 @@ export default function Login({ onVerified, returningName }) {
 
               <button
                 onClick={verifyOtp}
-                disabled={otp.length < 4 || verifying}
+                disabled={otp.length < 6 || verifying}
                 className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition px-6 py-4 text-lg font-bold text-white shadow-lg shadow-emerald-600/30"
               >
                 {verifying ? (
