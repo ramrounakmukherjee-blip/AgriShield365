@@ -129,6 +129,7 @@ _SCAN_ERROR_STATUS = {
     "NO_IMAGE": (400, "No leaf image was provided."),
     "SCAN_PROVIDER_UNAVAILABLE": (502, "The AI scan service is unavailable. Please try again."),
     "SCAN_PROVIDER_ERROR": (502, "The AI scan service rejected the request. Please try again."),
+    "SCAN_KEY_ERROR": (502, "AI scan key rejected — ask the team to check GEMINI_API_KEY."),
     "SCAN_PARSE_ERROR": (502, "Could not read the AI diagnosis. Please retake the photo."),
 }
 

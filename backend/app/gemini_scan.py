@@ -17,7 +17,15 @@ import re
 
 import requests
 
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+# Try current models in order (override with GEMINI_MODEL). Newer API keys may
+# only have access to the latest model; we fall back so the scan always finds a
+# model that works.
+MODELS = [m for m in [
+    os.environ.get("GEMINI_MODEL", "").strip(),
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+] if m]
 API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 
 PROMPT = """You are an agricultural plant-pathologist assistant helping a
@@ -77,10 +85,6 @@ def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
     if crop_hint:
         prompt += f"\nThe farmer's crop is: {crop_hint}."
 
-    url = (
-        f"https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{MODEL}:generateContent?key={API_KEY}"
-    )
     body = {
         "contents": [{"parts": [
             {"text": prompt},
@@ -93,24 +97,39 @@ def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
         },
     }
 
-    try:
-        resp = requests.post(url, json=body, timeout=60)
-    except requests.RequestException as e:
-        print(f"[scan] gemini request failed: {e}")
-        raise RuntimeError("SCAN_PROVIDER_UNAVAILABLE")
+    last_status = None
+    last_body = ""
+    for model in MODELS:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{model}:generateContent?key={API_KEY}"
+        )
+        try:
+            resp = requests.post(url, json=body, timeout=60)
+        except requests.RequestException as e:
+            print(f"[scan] gemini request failed ({model}): {e}")
+            raise RuntimeError("SCAN_PROVIDER_UNAVAILABLE")
 
-    if resp.status_code != 200:
-        print(f"[scan] gemini HTTP {resp.status_code}: {resp.text[:400]}")
-        raise RuntimeError("SCAN_PROVIDER_ERROR")
+        if resp.status_code == 200:
+            try:
+                data = resp.json()
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                result = json.loads(text)
+            except (KeyError, IndexError, ValueError) as e:
+                print(f"[scan] parse error ({model}): {e}; body={resp.text[:400]}")
+                raise RuntimeError("SCAN_PARSE_ERROR")
+            result.setdefault("source", "gemini")
+            result.setdefault("model", model)
+            return result
 
-    try:
-        data = resp.json()
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
-        result = json.loads(text)
-    except (KeyError, IndexError, ValueError) as e:
-        print(f"[scan] could not parse gemini response: {e}; body={resp.text[:400]}")
-        raise RuntimeError("SCAN_PARSE_ERROR")
+        # 404 = model name not available -> try the next model. Anything else is
+        # a real error (bad/missing key, quota, policy).
+        last_status, last_body = resp.status_code, resp.text
+        print(f"[scan] gemini HTTP {resp.status_code} ({model}): {resp.text[:300]}")
+        if resp.status_code != 404:
+            break
 
-    result.setdefault("source", "gemini")
-    result.setdefault("model", MODEL)
-    return result
+    if last_status in (400, 401, 403):
+        # Most likely an invalid/missing/forbidden API key.
+        raise RuntimeError("SCAN_KEY_ERROR")
+    raise RuntimeError("SCAN_PROVIDER_ERROR")

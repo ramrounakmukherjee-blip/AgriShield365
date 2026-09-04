@@ -340,8 +340,10 @@ export function getImpactStats() {
  */
 export async function scanLeaf(imageDataUrl, crop) {
   try {
+    // Long timeout: the free Render server may be cold-booting (~30-60s) plus
+    // the Gemini call (~5-20s).
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 70000);
+    const timer = setTimeout(() => controller.abort(), 120000);
     const resp = await fetch(`${API_BASE}/scan`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -354,13 +356,23 @@ export async function scanLeaf(imageDataUrl, crop) {
       try {
         detail = (await resp.json())?.detail || detail;
       } catch {}
+      console.warn("[scan] backend returned:", resp.status, detail);
       return { ok: false, reason: "http", detail, status: resp.status };
     }
     const data = await resp.json();
     return { ok: true, scan: data.scan };
   } catch (e) {
+    console.warn("[scan] request failed:", e?.message || e);
     return { ok: false, reason: "network", detail: e?.message || "network error" };
   }
+}
+
+/** Wake the free Render backend before the user submits a photo (cold starts
+ *  take ~30-60s). Best-effort fire-and-forget. */
+export function wakeScanBackend() {
+  try {
+    fetch(`${API_BASE}/health`, { mode: "cors" }).catch(() => {});
+  } catch {}
 }
 
 /** Read a selected image File into a downscaled JPEG data URL (keeps payload

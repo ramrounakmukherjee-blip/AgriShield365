@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -13,7 +13,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
-import { scanLeaf, fileToScaledDataUrl } from "../../lib/api";
+import { scanLeaf, fileToScaledDataUrl, wakeScanBackend } from "../../lib/api";
 import SpeakButton from "./SpeakButton";
 
 const sevStyle = {
@@ -29,6 +29,12 @@ export default function ScanModal({ crop, onClose }) {
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Wake the free Render backend the moment the scan screen opens, so a cold
+  // start overlaps with the user choosing/taking a photo instead of blocking.
+  useEffect(() => {
+    wakeScanBackend();
+  }, []);
 
   const tr = (obj) => (obj && obj[lang]) || (obj && obj.en) || "";
 
