@@ -1,0 +1,44 @@
+{
+  "_note": "AgriShield 365 rule data (researcher placeholders — M1 thresholds / M2 Kc). Editable without touching code. Keep ids identical to the frontend.",
+
+  "crops": {
+    "paddy": {
+      "baseDays": 120,
+      "stages": [
+        { "days": [0, 30],  "kc": 1.05, "critical": false },
+        { "days": [30, 65], "kc": 1.15, "critical": false },
+        { "days": [65, 100],"kc": 1.20, "critical": true },
+        { "days": [100, 120],"kc": 0.85, "critical": false }
+      ]
+    },
+    "potato": {
+      "baseDays": 105,
+      "stages": [
+        { "days": [0, 25],  "kc": 0.50, "critical": false },
+        { "days": [25, 50], "kc": 0.75, "critical": false },
+        { "days": [50, 80], "kc": 1.15, "critical": true },
+        { "days": [80, 110], "kc": 0.85, "critical": false }
+      ]
+    },
+    "cotton": {
+      "baseDays": 165,
+      "stages": [
+        { "days": [0, 30],  "kc": 0.35, "critical": false },
+        { "days": [30, 75], "kc": 0.75, "critical": false },
+        { "days": [75, 120],"kc": 1.18, "critical": true },
+        { "days": [120, 180],"kc": 0.75, "critical": false }
+      ]
+    }
+  },
+
+  "threats": [
+    { "id": "rice_blast",      "crop": "paddy",  "type": "disease", "minTemp": 22, "maxTemp": 28, "minHumidity": 90, "maxHumidity": null, "rainNeeded": 0, "windowDays": 3, "vulnerableStages": [1, 2] },
+    { "id": "sheath_blight",   "crop": "paddy",  "type": "disease", "minTemp": 28, "maxTemp": 33, "minHumidity": 85, "maxHumidity": null, "rainNeeded": 0, "windowDays": 3, "vulnerableStages": [1, 2] },
+    { "id": "late_blight",     "crop": "potato", "type": "disease", "minTemp": 10, "maxTemp": 24, "minHumidity": 90, "maxHumidity": null, "rainNeeded": 2, "windowDays": 2, "vulnerableStages": [1, 2, 3] },
+    { "id": "early_blight",    "crop": "potato", "type": "disease", "minTemp": 24, "maxTemp": 30, "minHumidity": 75, "maxHumidity": null, "rainNeeded": 0, "windowDays": 4, "vulnerableStages": [1, 2, 3] },
+    { "id": "bacterial_blight","crop": "cotton", "type": "disease", "minTemp": 25, "maxTemp": 35, "minHumidity": 70, "maxHumidity": null, "rainNeeded": 5, "windowDays": 2, "vulnerableStages": [1, 2] },
+    { "id": "fusarium_wilt",   "crop": "cotton", "type": "disease", "minTemp": 30, "maxTemp": 38, "minHumidity": 0,  "maxHumidity": null, "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [1, 2], "waterlogging": true },
+    { "id": "bollworm",        "crop": "cotton", "type": "pest",    "minTemp": 25, "maxTemp": 33, "minHumidity": 60, "maxHumidity": null, "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [2] },
+    { "id": "whitefly",        "crop": "cotton", "type": "pest",    "minTemp": 30, "maxTemp": 42, "minHumidity": 0,  "maxHumidity": 65,   "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [1, 2], "dry": true }
+  ]
+}

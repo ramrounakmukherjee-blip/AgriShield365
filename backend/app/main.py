@@ -1,0 +1,127 @@
+"""
+AgriShield 365 — FastAPI backend.
+
+Design (demo-proof hybrid):
+  * The React PWA computes advisories locally first (instant + offline).
+  * It calls this service in the BACKGROUND to (a) persist readings to
+    Firestore and (b) run the official Python rule engine / future Gemini scan.
+  * If this server is asleep (free Render tier) or offline, the app keeps
+    working — nothing in the UI waits on it.
+
+Run locally:
+    pip install -r requirements.txt
+    uvicorn app.main:app --reload --port 8000
+Docs at  http://localhost:8000/docs
+"""
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+from .weather_api import get_weather
+from .rules_engine import compute_advisory, THREATS, CROPS
+from . import firestore_db
+
+app = FastAPI(title="AgriShield 365 API", version="1.0")
+
+# Browser PWA calls us directly — allow all origins in the demo (lock down later).
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.on_event("startup")
+def _startup():
+    firestore_db.init_firebase()
+
+
+@app.get("/")
+def root():
+    return {"name": "AgriShield 365 API", "docs": "/docs", "health": "/health"}
+
+
+@app.get("/health")
+def health():
+    # Lightweight route used to wake the free Render instance before a demo.
+    return {
+        "status": "ok",
+        "crops": list(CROPS.keys()),
+        "threats": len(THREATS),
+        "firebase": firestore_db.db() is not None,
+    }
+
+
+class AdvisoryRequest(BaseModel):
+    lat: float = Field(..., ge=-90, le=90)
+    lng: float = Field(..., ge=-180, le=180)
+    crop: str
+    idToken: str | None = None       # Firebase Auth ID token (preferred)
+    uid: str | None = None           # fallback; only trusted when no token env
+    daysElapsed: int | None = None   # if omitted, defaults to 42 in engine
+    irrigation: str = "flood"
+    soil: str = "loamy"
+    area: float = 1.0
+
+
+def _verify_token(idToken: str | None) -> str | None:
+    """Return the verified uid from a Firebase ID token, else None."""
+    if not idToken:
+        return None
+    client = firestore_db.db()
+    if client is None:
+        return None
+    try:
+        from firebase_admin import auth
+        decoded = auth.verify_id_token(idToken)
+        return decoded.get("uid")
+    except Exception as e:
+        print(f"[auth] token verify failed: {e}")
+        return None
+
+
+@app.post("/get-advisory")
+def get_advisory(req: AdvisoryRequest):
+    if req.crop not in CROPS:
+        raise HTTPException(status_code=400, detail=f"Unknown crop '{req.crop}'.")
+
+    # Auth: trust the verified token uid; fall back to provided uid in demo mode.
+    uid = _verify_token(req.idToken) or req.uid
+
+    weather = get_weather(req.lat, req.lng)
+    if weather.get("source") == "error" or not weather.get("daily"):
+        raise HTTPException(status_code=502, detail="Weather provider unavailable.")
+
+    advisory = compute_advisory(
+        weather, req.crop,
+        days_elapsed=req.daysElapsed if req.daysElapsed is not None else 42,
+        irrigation=req.irrigation, soil=req.soil, area=req.area,
+    )
+
+    saved = firestore_db.save_advisory(uid, req.crop, req.lat, req.lng, advisory) if uid else False
+
+    return {
+        "status": "ok",
+        "uid": uid,
+        "persisted": saved,
+        "weather": weather,
+        "advisory": advisory,
+    }
+
+
+class ScanRequest(BaseModel):
+    # Leaf-scan (Gemini) lands here in a later phase — accepts the photo URL/path.
+    lat: float | None = None
+    lng: float | None = None
+    crop: str | None = None
+    imageUrl: str | None = None
+
+
+@app.post("/scan")
+def scan_leaf(req: ScanRequest):
+    # Placeholder: Gemini Vision call will live here (keeps the API key on the
+    # server). Until then the frontend uses the offline symptom checker.
+    return {"status": "not_implemented",
+            "message": "Leaf scan (Gemini) is being wired up; use the symptom checker."}
