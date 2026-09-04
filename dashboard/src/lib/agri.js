@@ -24,7 +24,7 @@ export const CROPS = [
     emoji: "🥔",
     name: { en: "Potato", hi: "आलू", bn: "আলু", mr: "बटाटा" },
     region: { en: "West Bengal", hi: "पश्चिम बंगाल", bn: "পশ্চিমবঙ্গ", mr: "पश्चिम बंगाल" },
-    baseDays: 105,
+    baseDays: 110,
     price: 1850,
     stages: [
       { id: "t1", days: [0, 25], kc: 0.5 },
@@ -38,7 +38,7 @@ export const CROPS = [
     emoji: "🫛",
     name: { en: "Cotton", hi: "कपास", bn: "তুলা", mr: "कापूस" },
     region: { en: "Vidarbha, Maharashtra", hi: "विदर्भ, महाराष्ट्र", bn: "বিদর্ভ, মহারাষ্ট্র", mr: "विदर्भ, महाराष्ट्र" },
-    baseDays: 165,
+    baseDays: 180,
     price: 7020,
     stages: [
       { id: "c1", days: [0, 30], kc: 0.35 },

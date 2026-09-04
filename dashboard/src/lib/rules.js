@@ -1,8 +1,9 @@
 // AgriShield 365 — rule engine.
 // Early-warning logic: matches forecast weather against disease/pest trigger
 // thresholds and generates disaster alerts.
-// NOTE: threshold values are sensible agronomic placeholders pending the
-// researcher's verified Disease & Pest Matrix (Mission 1).
+// Thresholds from the agronomic researcher's Disease & Pest Matrix (Mission 1),
+// sourced from ICAR / TNAU Agritech Portal. Keep ids in sync with
+// backend/app/data/rules.json.
 
 // Each threat: weather window that raises risk + vulnerable crop stages.
 export const THREATS = [
@@ -139,7 +140,7 @@ export const THREATS = [
       bn: "বোলওয়ার্ম (শুঁয়োপোকা)",
       mr: "बोंडअळी",
     },
-    minTemp: 25, maxTemp: 33, minHumidity: 60,
+    minTemp: 25, maxTemp: 33, minHumidity: 60, maxHumidity: 88,
     rainNeeded: 0, windowDays: 5,
     vulnerableStages: [2],
     action: {
@@ -159,7 +160,7 @@ export const THREATS = [
       bn: "সাদা মাছি",
       mr: "पांढरी माशी",
     },
-    minTemp: 30, maxTemp: 42, minHumidity: 0, maxHumidity: 65,
+    minTemp: 30, maxTemp: 42, minHumidity: 45, maxHumidity: 70,
     rainNeeded: 0, dry: true, windowDays: 5,
     vulnerableStages: [1, 2],
     action: {

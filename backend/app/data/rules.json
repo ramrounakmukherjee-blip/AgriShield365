@@ -1,5 +1,5 @@
 {
-  "_note": "AgriShield 365 rule data (researcher placeholders — M1 thresholds / M2 Kc). Editable without touching code. Keep ids identical to the frontend.",
+  "_note": "AgriShield 365 rule data — M1 disease/pest matrix + M2 FAO-56 Kc from the agronomic researcher (sources: ICAR/TNAU/FAO-56/CICR). Editable without touching code. Keep ids identical to the frontend.",
 
   "crops": {
     "paddy": {
@@ -12,7 +12,7 @@
       ]
     },
     "potato": {
-      "baseDays": 105,
+      "baseDays": 110,
       "stages": [
         { "days": [0, 25],  "kc": 0.50, "critical": false },
         { "days": [25, 50], "kc": 0.75, "critical": false },
@@ -21,7 +21,7 @@
       ]
     },
     "cotton": {
-      "baseDays": 165,
+      "baseDays": 180,
       "stages": [
         { "days": [0, 30],  "kc": 0.35, "critical": false },
         { "days": [30, 75], "kc": 0.75, "critical": false },
@@ -38,7 +38,7 @@
     { "id": "early_blight",    "crop": "potato", "type": "disease", "minTemp": 24, "maxTemp": 30, "minHumidity": 75, "maxHumidity": null, "rainNeeded": 0, "windowDays": 4, "vulnerableStages": [1, 2, 3] },
     { "id": "bacterial_blight","crop": "cotton", "type": "disease", "minTemp": 25, "maxTemp": 35, "minHumidity": 70, "maxHumidity": null, "rainNeeded": 5, "windowDays": 2, "vulnerableStages": [1, 2] },
     { "id": "fusarium_wilt",   "crop": "cotton", "type": "disease", "minTemp": 30, "maxTemp": 38, "minHumidity": 0,  "maxHumidity": null, "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [1, 2], "waterlogging": true },
-    { "id": "bollworm",        "crop": "cotton", "type": "pest",    "minTemp": 25, "maxTemp": 33, "minHumidity": 60, "maxHumidity": null, "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [2] },
-    { "id": "whitefly",        "crop": "cotton", "type": "pest",    "minTemp": 30, "maxTemp": 42, "minHumidity": 0,  "maxHumidity": 65,   "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [1, 2], "dry": true }
+    { "id": "bollworm",        "crop": "cotton", "type": "pest",    "minTemp": 25, "maxTemp": 33, "minHumidity": 60, "maxHumidity": 88,   "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [2] },
+    { "id": "whitefly",        "crop": "cotton", "type": "pest",    "minTemp": 30, "maxTemp": 42, "minHumidity": 45, "maxHumidity": 70,   "rainNeeded": 0, "windowDays": 5, "vulnerableStages": [1, 2], "dry": true }
   ]
 }
