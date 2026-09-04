@@ -16,7 +16,7 @@ import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp } from "
 // Public web config — safe to ship in frontend code (data is protected by
 // Firestore security rules, not by hiding this config).
 const firebaseConfig = {
-  apiKey: "AIzaSyAtVUj_gESy00xN_LiGt8pNIIUIuFpDeTg",
+  apiKey: "AIzaSyARyoWBrgxCD2Xd0IzSCinbbUSX9xW-Zkg",
   authDomain: "agrishield365.firebaseapp.com",
   projectId: "agrishield365",
   storageBucket: "agrishield365.firebasestorage.app",
