@@ -540,6 +540,9 @@ export async function cloudSyncAdvisory(profile, weather) {
         irrigation: profile.irrigation || "flood",
         soil: profile.soil || "loamy",
         area: Number(profile.area) || 1,
+        // Send the live weather we already used, so the cloud brain doesn't
+        // have to re-fetch (avoids cold-start/network flakiness).
+        weather: weather?.daily?.length ? weather : undefined,
       }),
       signal: ctrl.signal,
     });

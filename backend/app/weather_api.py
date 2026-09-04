@@ -15,7 +15,7 @@ Run directly to self-test:  python weather_api.py
 import requests
 
 OPEN_METEO = "https://api.open-meteo.com/v1/forecast"
-TIMEOUT_SECONDS = 8
+TIMEOUT_SECONDS = 15
 
 
 def get_weather(lat: float, lon: float) -> dict:
@@ -39,14 +39,17 @@ def get_weather(lat: float, lon: float) -> dict:
         "timezone": "auto",
         "forecast_days": 7,
     }
-    try:
-        r = requests.get(OPEN_METEO, params=params, timeout=TIMEOUT_SECONDS)
-        r.raise_for_status()
-        return _normalize(r.json())
-    except Exception as e:  # network/API problem — signal clearly to the caller
-        print(f"[weather_api] Open-Meteo fetch failed: {e}")
-        return {"source": "error", "error": str(e),
-                "current": None, "daily": [], "hourly": []}
+    last_err = None
+    for attempt in (1, 2):  # one retry on transient failure
+        try:
+            r = requests.get(OPEN_METEO, params=params, timeout=TIMEOUT_SECONDS)
+            r.raise_for_status()
+            return _normalize(r.json())
+        except Exception as e:  # network/API problem — retry, then signal failure
+            last_err = e
+            print(f"[weather_api] Open-Meteo fetch attempt {attempt} failed: {e}")
+    return {"source": "error", "error": str(last_err),
+            "current": None, "daily": [], "hourly": []}
 
 
 def _round1(x):

@@ -65,6 +65,7 @@ class AdvisoryRequest(BaseModel):
     irrigation: str = "flood"
     soil: str = "loamy"
     area: float = 1.0
+    weather: dict | None = None      # client-supplied live weather (preferred)
 
 
 def _verify_token(idToken: str | None) -> str | None:
@@ -91,7 +92,9 @@ def get_advisory(req: AdvisoryRequest):
     # Auth: trust the verified token uid; fall back to provided uid in demo mode.
     uid = _verify_token(req.idToken) or req.uid
 
-    weather = get_weather(req.lat, req.lng)
+    # Prefer the weather the app already fetched (same shape, instant, avoids a
+    # redundant server call); fall back to the server fetching it itself.
+    weather = req.weather if (req.weather and req.weather.get("daily")) else get_weather(req.lat, req.lng)
     if weather.get("source") == "error" or not weather.get("daily"):
         raise HTTPException(status_code=502, detail="Weather provider unavailable.")
 
