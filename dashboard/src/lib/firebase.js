@@ -3,7 +3,7 @@
 //  - Firestore cloud save for farm profile / advisory history.
 // Everything is wrapped in safe guards: if the SDK is missing, the network
 // is off, or a domain isn't authorized, the app transparently falls back to
-// the local demo (OTP 1357 / localStorage), so the product never breaks.
+// the local demo (OTP 123456 / localStorage), so the product never breaks.
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -34,6 +34,11 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  // Test mode for the hackathon demo: reCAPTCHA auto-resolves and whitelisted
+  // "Phone numbers for testing" sign in with their fixed 6-digit code (no SMS,
+  // no card / Blaze required). Real SMS to arbitrary numbers needs the Blaze
+  // plan; when you upgrade, delete this line to restore normal app verification.
+  try { auth.settings.appVerificationDisabledForTesting = true; } catch {}
 } catch (e) {
   initError = e;
   console.warn("[firebase] init disabled:", e?.message || e);
@@ -47,15 +52,14 @@ export function firebaseReady() {
 
 let recaptcha = null;
 
-// Create a fresh visible reCAPTCHA. A solvable "I'm not a robot" checkbox is
-// what lets REAL (non-whitelisted) numbers pass app verification and receive a
-// genuine SMS. Whitelisted test numbers skip it automatically, so the instant
-// no-SMS demo keeps working.
+// Create a fresh reCAPTCHA verifier for each attempt. In test mode
+// (appVerificationDisabledForTesting) it auto-resolves invisibly and whitelisted
+// test numbers sign in with their fixed code — no human interaction, no SMS.
 function createRecaptcha() {
   if (!auth) return null;
   try {
     return new RecaptchaVerifier(auth, "recaptcha-container", {
-      size: "normal",
+      size: "invisible",
     });
   } catch (e) {
     console.warn("[firebase] recaptcha failed:", e?.message);
