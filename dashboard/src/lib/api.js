@@ -304,6 +304,7 @@ export function getImpactStats() {
   return [
     {
       value: "40%",
+      source: "ICAR – Central Institute for Cotton Research (CICR), Nagpur",
       text: {
         en: "of Vidarbha cotton yield is lost to pests & disease every year",
         hi: "विदर्भ में हर साल ~40% कपास उपज कीट-रोग से नष्ट",
@@ -313,6 +314,7 @@ export function getImpactStats() {
     },
     {
       value: "3-5d",
+      source: "IMD Agromet & TNAU Agritech Portal",
       text: {
         en: "is the lead time early weather warnings give a farmer",
         hi: "पहले से चेतावनी किसान को 3-5 दिन का समय देती है",
@@ -322,6 +324,7 @@ export function getImpactStats() {
     },
     {
       value: "30%",
+      source: "FAO Irrigation & Drainage Paper 56 (FAO-56)",
       text: {
         en: "water saving possible with stage-timed irrigation",
         hi: "सही समय सिंचाई से ~30% पानी बचत",

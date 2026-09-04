@@ -13,6 +13,8 @@ import {
   CheckCircle2,
   Stethoscope,
   Camera,
+  BookOpen,
+  FlaskConical,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
@@ -251,10 +253,47 @@ export default function HomeScreen({ profile, weather, advisories }) {
             >
               <p className="text-3xl font-extrabold text-emerald-300">{s.value}</p>
               <p className="text-xs text-emerald-100/90 mt-1 leading-relaxed">{tr(s.text)}</p>
+              {s.source && (
+                <p className="mt-2 flex items-start gap-1 text-[10px] font-semibold text-emerald-300/80 leading-snug border-t border-white/10 pt-1.5">
+                  <BookOpen className="w-3 h-3 mt-0.5 shrink-0" />
+                  <span>{s.source}</span>
+                </p>
+              )}
             </motion.div>
           ))}
         </div>
       </section>
+
+      {/* Science & sources — credibility layer (all free) */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-2xl border border-stone-200 p-5"
+      >
+        <h3 className="font-extrabold text-stone-800 flex items-center gap-2">
+          <FlaskConical className="w-5 h-5 text-emerald-600" />
+          {tr({ en: "The science behind AgriShield 365", hi: "AgriShield 365 के पीछे का विज्ञान", bn: "AgriShield 365-এর পেছনের বিজ্ঞান", mr: "AgriShield 365 मागील शास्त्र" })}
+        </h3>
+        <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+          {tr({ en: "Every alert and irrigation plan is grounded in verified government & institutional sources — not guesswork.", hi: "हर चेतावनी और सिंचाई योजना सत्यापित सरकारी व संस्थागत स्रोतों पर आधारित है — अनुमान नहीं।", bn: "প্রতিটি সতর্কতা ও সেচ পরিকল্পনা যাচাইকৃত সরকারি ও প্রাতিষ্ঠানিক উৎসের ভিত্তিতে — অনুমান নয়।", mr: "प्रत्येक इशारा व सिंचन योजना पडताळलेल्या सरकारी व संस्थात्मक स्त्रोतांवर आधारित — अंदाज नाही." })}
+        </p>
+        <ul className="mt-4 flex flex-col gap-2.5">
+          {[
+            { icon: "🌦️", src: { en: "Open-Meteo live weather (IMD-grade forecasts), refreshed for your GPS field location", hi: "Open-Meteo लाइव मौसम (IMD-स्तरीय पूर्वानुमान), आपके GPS खेत के लिए", bn: "Open-Meteo লাইভ আবহাওয়া (IMD-স্তরের পূর্বাভাস), আপনার GPS মাঠের জন্য", mr: "Open-Meteo थेट हवामान (IMD-दर्जाचे अंदाज), तुमच्या GPS शेतासाठी" } },
+            { icon: "🐛", src: { en: "Disease & pest thresholds — ICAR (CICR Nagpur) & TNAU Agritech Portal", hi: "रोग-कीट सीमाएँ — ICAR (CICR नागपुर) और TNAU एग्रीटेक पोर्टल", bn: "রোগ-পোকা মাত্রা — ICAR (CICR নাগপুর) ও TNAU অ্যাগ্রিটেক পোর্টাল", mr: "रोग-कीड सीमा — ICAR (CICR नागपूर) व TNAU ॲग्रिटेक पोर्टल" } },
+            { icon: "💧", src: { en: "Smart irrigation — FAO-56 Penman-Monteith crop coefficients (Kc)", hi: "स्मार्ट सिंचाई — FAO-56 पेनमैन-मोंटिथ फसल गुणांक (Kc)", bn: "স্মার্ট সেচ — FAO-56 পেনম্যান-মন্টিথ শস্য গুণাঙ্ক (Kc)", mr: "स्मार्ट सिंचन — FAO-56 पेनमन-माँटेइथ पीक गुणांक (Kc)" } },
+          ].map((row, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-sm text-stone-600">
+              <span className="text-base leading-6">{row.icon}</span>
+              <span className="leading-snug">{tr(row.src)}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-[11px] text-stone-400 leading-relaxed flex items-start gap-1.5 border-t border-stone-100 pt-3">
+          <BookOpen className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+          {tr({ en: "Advisory screening only — always confirm sprays with your local KVK / agriculture officer.", hi: "यह केवल सलाह-स्क्रीनिंग है — छिड़काव से पहले स्थानीय KVK / कृषि अधिकारी से पुष्टि करें।", bn: "এটি শুধু পরামর্শ-স্ক্রিনিং — স্প্রে করার আগে স্থানীয় KVK/কৃষি অফিসারের সঙ্গে নিশ্চিত করুন।", mr: "हे केवळ सल्ला-स्क्रीनिंग आहे — फवारणीपूर्वी स्थानिक KVK/कृषी अधिकाऱ्यांची खात्री करा." })}
+        </p>
+      </motion.section>
 
       {/* Symptom checker modal */}
       <AnimatePresence>

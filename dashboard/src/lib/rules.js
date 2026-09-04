@@ -22,7 +22,7 @@ export const THREATS = [
     rainNeeded: 0, windowDays: 3,
     vulnerableStages: [1, 2],
     action: {
-      en: "Avoid excess nitrogen; ensure field drainage and prepare a preventative fungicide spray if humidity stays high.",
+      en: "Avoid excess nitrogen; ensure proper field drainage; keep preventive fungicide (Tricyclazole 75 WP) ready if humidity stays high.",
       hi: "अतिरिक्त नाइट्रोजन से बचें; खेत की निकासी ठीक रखें और आर्द्रता बनी रहे तो रोकथाम का फफूंदनाशक छिड़काव तैयार रखें।",
       bn: "অতিরিক্ত নাইট্রোজেন এড়ান; জমি থেকে পানি নিষ্কাশন নিশ্চিত করুন এবং আর্দ্রতা বেশি থাকলে প্রতিরোধমূলক ছত্রাকনাশক প্রস্তুত রাখুন।",
       mr: "जादा नायट्रोजन टाळा; शेताचा निचरा ठेवा आणि आर्द्रता टिकून राहिल्यास प्रतिबंधात्मक बुरशीनाशक फवारणी तयार ठेवा.",
@@ -42,7 +42,7 @@ export const THREATS = [
     rainNeeded: 0, windowDays: 3,
     vulnerableStages: [1, 2],
     action: {
-      en: "Reduce dense plant spacing, avoid over-watering, and monitor the lower leaf sheaths for grey lesions.",
+      en: "Reduce dense spacing, avoid over-watering, inspect lower leaf sheaths for grey lesions, and spray Validamycin 3L if the threshold is crossed.",
       hi: "पौधों की घनी बुवाई कम करें, अधिक पानी से बचें और निचली पत्तियों पर धूसर धब्बे देखें।",
       bn: "ঘন রোপণ কমান, অতিরিক্ত পানি এড়ান এবং নিচের পাতার খাপে ধূসর দাগ লক্ষ্য করুন।",
       mr: "दाट लागवड टाळा, जास्त पाणी टाळा आणि खालच्या पानांवर राखट डाग पहा.",
@@ -63,7 +63,7 @@ export const THREATS = [
     rainNeeded: 2, windowDays: 2,
     vulnerableStages: [1, 2, 3],
     action: {
-      en: "High-risk window: spray preventative fungicide BEFORE the wet spell hits; stop irrigation while foliage stays wet.",
+      en: "High-risk window: spray contact preventive fungicide (Mancozeb 75 WP @ 2g/L) BEFORE the rain spell; halt irrigation while foliage is wet.",
       hi: "उच्च जोखिम: बारिश से पहले ही रोकथाम का फफूंदनाशक छिड़काव करें; पत्ते गीले रहने तक सिंचाई रोकें।",
       bn: "উচ্চ ঝুঁকি: ভেজা আবহাওয়ার আগেই প্রতিরোধমূলক ছত্রাকনাশক স্প্রে করুন; পাতা ভেজা থাকলে সেচ বন্ধ রাখুন।",
       mr: "उच्च धोका: ओल्या हवामानाआधीच प्रतिबंधात्मक बुरशीनाशक फवारा; पाने ओली असेपर्यंत सिंचन थांबवा.",
@@ -83,7 +83,7 @@ export const THREATS = [
     rainNeeded: 0, windowDays: 4,
     vulnerableStages: [1, 2, 3],
     action: {
-      en: "Rotate fungicide sprays, remove affected lower leaves, and keep plants well-fed with potassium.",
+      en: "Rotate fungicide sprays (Chlorothalonil / Mancozeb), remove affected lower senescent leaves, and maintain optimal potassium nutrition.",
       hi: "फफूंदनाशक बदल-बदलकर छिड़कें, प्रभावित निचली पत्तियाँ हटाएँ, पोटेशियम पोषण बनाए रखें।",
       bn: "ছত্রাকনাশক পালাক্রমে স্প্রে করুন, আক্রান্ত নিচের পাতা সরান এবং পটাশিয়াম প্রয়োগ ঠিক রাখুন।",
       mr: "बुरशीनाशक पाळीने फवारा, बाधित खालची पाने काढा आणि पोटॅश पुरेसा द्या.",
@@ -104,7 +104,7 @@ export const THREATS = [
     rainNeeded: 5, windowDays: 2,
     vulnerableStages: [1, 2],
     action: {
-      en: "Spreads by rain-splash: avoid field work in wet plants, ensure drainage, and use copper-based spray after the rain.",
+      en: "Spreads by rain-splash: avoid field work on wet plants, ensure drainage, and spray Copper Oxychloride 50 WP (25g) + Streptocycline (1g) in 10L water after rain.",
       hi: "बारिश के छींटों से फैलता है — गीले पौधों में काम न करें, निकासी ठीक रखें, बारिश के बाद कॉपर छिड़काव करें।",
       bn: "বৃষ্টির ছিটায় ছড়ায় — ভেজা গাছে কাজ এড়ান, নিষ্কাশন ঠিক রাখুন এবং বৃষ্টির পর কপার স্প্রে করুন।",
       mr: "पावसाच्या उड्ड्यांनी पसरते — ओल्या झाडांत काम टाळा, निचरा ठेवा, पावसानंतर तांबे फवारणी करा.",
@@ -124,7 +124,7 @@ export const THREATS = [
     rainNeeded: 0, waterlogging: true, windowDays: 5,
     vulnerableStages: [1, 2],
     action: {
-      en: "Soil-borne and triggered by waterlogging + heat: prevent standing water completely and scout for wilting plants.",
+      en: "Soil-borne, triggered by waterlogging + heat: prevent all standing water, improve drainage, scout for wilting plants, and spot-drench roots with Carbendazim 50 WP @ 1g/L.",
       hi: "मिट्टी जनित — जलभराव + गर्मी से बढ़ता है; खेत में पानी बिल्कुल न रुकने दें और मुरझाते पौधों पर नज़र रखें।",
       bn: "মাটিবাহিত — জলাবদ্ধতা ও তাপে বাড়ে; জমিতে পানি জমতে দেবেন না এবং শুকিয়ে যাওয়া গাছ খুঁজে দেখুন।",
       mr: "मातीतून होते — पाणी साचणे + उष्णता वाढवते; शेतात पाणी अजिबात साचू देऊ नका, कोमजलेली झाडे तपासा.",
@@ -144,7 +144,7 @@ export const THREATS = [
     rainNeeded: 0, windowDays: 5,
     vulnerableStages: [2],
     action: {
-      en: "Most damaging during flowering/boll stage: install pheromone traps now, scout bolls for holes, and use IPM sprays at threshold.",
+      en: "Most damaging during flowering/boll stage: install funnel pheromone traps (5/acre), scout bolls for entry holes, and apply NSKE 5% or Emamectin Benzoate 5 SG at the economic threshold.",
       hi: "फूल/बोंड अवस्था में सबसे नुकसानदायक — अभी फेरोमोन ट्रैप लगाएँ, बोंडों में छेद जाँचें, आर्थिक सीमा पर IPM छिड़काव करें।",
       bn: "ফুল/বোল পর্যায়ে সবচেয়ে ক্ষতিকর — এখনই ফেরোমন ফাঁদ লাগান, বোলে ফুটো দেখুন এবং থ্রেশহোল্ডে IPM স্প্রে করুন।",
       mr: "फुलोरा/बोंड अवस्थेत सर्वाधिक नुकसान — आताच फेरोमोन सापळे लावा, बोंडांना छिद्रे तपासा, थ्रेशोल्डवर IPM फवारणी करा.",
@@ -164,7 +164,7 @@ export const THREATS = [
     rainNeeded: 0, dry: true, windowDays: 5,
     vulnerableStages: [1, 2],
     action: {
-      en: "Thrives in dry heat and spreads leaf-curl virus: avoid broad insecticides that kill its predators, use yellow sticky traps.",
+      en: "Thrives in dry heat and spreads leaf-curl virus: install yellow sticky traps (10-15/acre), avoid excess nitrogen, and spray Diafenthiuron 50 WP (600g/ha) or Pyriproxyfen 10 EC if ETL exceeds 5-10 insects/leaf.",
       hi: "शुष्क गर्मी में पनपती है और लीफ-कर्ल वायरस फैलाती है — इनके शत्रु कीड़े मारने वाली अंधाधुंध दवाई से बचें, पीले चिपचिपे ट्रैप लगाएँ।",
       bn: "শুষ্ক গরমে বাড়ে এবং লিফ-কার্ল ভাইরাস ছড়ায় — ক্ষতিকারক পোকা মারা কীটনাশক এড়ান, হলুদ স্টিকি ফাঁদ ব্যবহার করুন।",
       mr: "कोरड्या उष्णतेत वाढते, लीफ-कर्ल व्हायरस पसरवते — त्यांचे शत्रू मारणारी आंधळी कीटकनाशके टाळा, पिवळे चिकट सापळे लावा.",
