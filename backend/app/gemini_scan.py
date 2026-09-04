@@ -22,9 +22,14 @@ API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 
 # Preferred model order (newest/cheap first). These are only a preference — the
 # live ListModels discovery below picks whichever actually exist for the key.
+# NOTE: Google retires model names for new keys (e.g. 2.5-flash -> use 3.6-flash),
+# so keep the newest flash at the top and let ListModels fill in the rest.
 PREFERRED_MODELS = [m for m in [
     os.environ.get("GEMINI_MODEL", "").strip(),
+    "gemini-3.6-flash",
+    "gemini-3.1-flash",
     "gemini-3-flash",
+    "gemini-flash-latest",
     "gemini-2.5-flash",
     "gemini-2.0-flash",
     "gemini-1.5-flash",
@@ -206,39 +211,45 @@ def ping() -> dict:
             "message": msg,
         }
 
-    # Prefer a flash model that exists.
-    chosen = None
-    for m in PREFERRED_MODELS:
-        if m in names:
-            chosen = m
-            break
-    if not chosen:
-        flash = [n for n in names if "flash" in n]
-        chosen = flash[0] if flash else (names[0] if names else None)
-    if not chosen:
-        return {"ok": False, "reason": "NO_GENERATE_MODEL", "available": names[:30]}
-
+    # Try each model in order (preferred flash models first, then discovered
+    # flashes). Return as soon as one actually generates.
     body = {
         "contents": [{"parts": [{"text": "Reply with the word OK."}]}],
         "generationConfig": {"temperature": 0, "maxOutputTokens": 10},
     }
-    url = (
-        f"https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{chosen}:generateContent?key={API_KEY}"
-    )
-    try:
-        r = requests.post(url, json=body, timeout=30)
-    except requests.RequestException as e:
-        return {"ok": False, "reason": "NETWORK", "model": chosen, "error": str(e)[:200]}
-    if r.status_code == 200:
-        return {
-            "ok": True,
-            "model": chosen,
-            "availableFlash": [n for n in names if "flash" in n][:12],
-        }
-    try:
-        emsg = r.json().get("error", {}).get("message", r.text[:300])
-    except ValueError:
-        emsg = r.text[:300]
-    print(f"[scan-ping] generate HTTP {r.status_code} ({chosen}): {emsg}")
-    return {"ok": False, "reason": f"GENERATE_HTTP_{r.status_code}", "model": chosen, "message": emsg}
+    try_order = []
+    for m in PREFERRED_MODELS:
+        if m in names and m not in try_order:
+            try_order.append(m)
+    for n in names:
+        if "flash" in n and n not in try_order:
+            try_order.append(n)
+    if not try_order:
+        return {"ok": False, "reason": "NO_GENERATE_MODEL", "available": names[:40]}
+
+    last = {}
+    for chosen in try_order:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{chosen}:generateContent?key={API_KEY}"
+        )
+        try:
+            r = requests.post(url, json=body, timeout=30)
+        except requests.RequestException as e:
+            last = {"reason": "NETWORK", "model": chosen, "error": str(e)[:200]}
+            continue
+        if r.status_code == 200:
+            return {
+                "ok": True,
+                "model": chosen,
+                "availableFlash": [n for n in names if "flash" in n][:15],
+            }
+        try:
+            emsg = r.json().get("error", {}).get("message", r.text[:300])
+        except ValueError:
+            emsg = r.text[:300]
+        print(f"[scan-ping] generate HTTP {r.status_code} ({chosen}): {emsg}")
+        last = {"reason": f"GENERATE_HTTP_{r.status_code}", "model": chosen, "message": emsg[:300]}
+        if r.status_code not in (404, 400):
+            break  # a real error (permissions/quota) — no point trying more
+    return {"ok": False, "available": names[:40], **last}
