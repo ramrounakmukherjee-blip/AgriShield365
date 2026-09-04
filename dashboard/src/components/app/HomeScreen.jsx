@@ -12,10 +12,12 @@ import {
   ShieldCheck,
   CheckCircle2,
   Stethoscope,
+  Camera,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
 import DiagnoseModal from "./DiagnoseModal";
+import ScanModal from "./ScanModal";
 import { weatherEmoji } from "../../lib/weather";
 import { getImpactStats } from "../../lib/api";
 
@@ -37,6 +39,7 @@ export default function HomeScreen({ profile, weather, advisories }) {
   const cur = weather.current;
   const stats = getImpactStats();
   const [showDiagnose, setShowDiagnose] = useState(false);
+  const [showScan, setShowScan] = useState(false);
 
   const highest = alerts.reduce((m, a) => {
     if (a.kind === "critical") return Math.max(m, 90);
@@ -116,6 +119,28 @@ export default function HomeScreen({ profile, weather, advisories }) {
           </div>
         )}
       </section>
+
+      {/* AI leaf-scan entry (Gemini via backend) */}
+      <motion.button
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        onClick={() => setShowScan(true)}
+        className="w-full text-left rounded-2xl border-2 border-emerald-600 bg-gradient-to-r from-emerald-600 to-green-600 p-4 flex items-center gap-3 hover:shadow-lg hover:shadow-emerald-600/30 transition active:scale-[0.99] group text-white"
+      >
+        <div className="w-12 h-12 shrink-0 rounded-2xl bg-white/20 grid place-items-center group-hover:scale-105 transition">
+          <Camera className="w-6 h-6" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-extrabold text-sm sm:text-base flex items-center gap-2">
+            {t("scan.cardTitle")}
+            <span className="text-[9px] font-bold uppercase tracking-wide bg-white/25 rounded-full px-2 py-0.5">AI</span>
+          </p>
+          <p className="text-xs text-emerald-50/90 mt-0.5 leading-snug">{t("scan.cardSub")}</p>
+        </div>
+        <span className="shrink-0 rounded-full bg-white text-emerald-700 text-xs font-bold px-4 py-2">
+          {t("scan.cardCta")}
+        </span>
+      </motion.button>
 
       {/* Symptom checker entry (option 6) */}
       <motion.button
@@ -233,6 +258,7 @@ export default function HomeScreen({ profile, weather, advisories }) {
 
       {/* Symptom checker modal */}
       <AnimatePresence>
+        {showScan && <ScanModal crop={crop} onClose={() => setShowScan(false)} />}
         {showDiagnose && <DiagnoseModal crop={crop} onClose={() => setShowDiagnose(false)} />}
       </AnimatePresence>
     </div>

@@ -10,6 +10,11 @@ import { evaluateThreats, evaluateWeather } from "./rules";
 const PROFILE_KEY = "agrishield365_profile_v2";
 const PHONE_KEY = "agrishield365_phone";
 
+// FastAPI cloud brain on Render (free tier sleeps; never block the UI on it).
+// Override per environment with VITE_API_URL if needed.
+export const API_BASE =
+  (import.meta.env.VITE_API_URL || "https://agrishield365-api.onrender.com").replace(/\/$/, "");
+
 // ---------- deterministic pseudo-random (mock fallback) ----------
 function hashString(str) {
   let h = 2166136261;
@@ -325,4 +330,63 @@ export function getImpactStats() {
       },
     },
   ];
+}
+
+// ---------- AI leaf scan (Gemini via FastAPI on Render) ----------
+/**
+ * Send a leaf photo (data URL or File) to the backend Gemini scan.
+ * Never blocks the product: on any failure returns { ok:false, reason } and
+ * the caller can fall back to the offline symptom checker.
+ */
+export async function scanLeaf(imageDataUrl, crop) {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 70000);
+    const resp = await fetch(`${API_BASE}/scan`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ crop: crop?.id || null, image: imageDataUrl }),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!resp.ok) {
+      let detail = `HTTP ${resp.status}`;
+      try {
+        detail = (await resp.json())?.detail || detail;
+      } catch {}
+      return { ok: false, reason: "http", detail, status: resp.status };
+    }
+    const data = await resp.json();
+    return { ok: true, scan: data.scan };
+  } catch (e) {
+    return { ok: false, reason: "network", detail: e?.message || "network error" };
+  }
+}
+
+/** Read a selected image File into a downscaled JPEG data URL (keeps payload
+ *  small for the free Render/Gemini call). */
+export function fileToScaledDataUrl(file, maxDim = 1024, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("read"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("image"));
+      img.onload = () => {
+        let { width, height } = img;
+        if (Math.max(width, height) > maxDim) {
+          const scale = maxDim / Math.max(width, height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
