@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Home, CalendarDays, Droplets, TrendingUp, User, LogOut } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import LanguageSwitcher from "../LanguageSwitcher";
-import { getForecast, getAdvisories, recordAdvisoryHistory } from "../../lib/api";
+import { getForecast, getAdvisories, recordAdvisoryHistory, cloudSyncAdvisory } from "../../lib/api";
 import { getSeason } from "../../lib/agri";
 import Loading from "./Loading";
 import HomeScreen from "./HomeScreen";
@@ -29,6 +29,8 @@ export default function AppShell({ profile, onSignOut, onProfileChange, onResetS
       const adv = getAdvisories(profile, w);
       setAdvisories(adv);
       recordAdvisoryHistory(profile, w, adv); // local + best-effort cloud log
+      // Background cloud brain: non-blocking, server runs the Python engine.
+      cloudSyncAdvisory(profile, w);
     });
     return () => {
       alive = false;

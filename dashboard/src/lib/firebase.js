@@ -115,6 +115,18 @@ export function currentUid() {
   return auth?.currentUser?.uid || null;
 }
 
+// Fresh Firebase ID token, used to authenticate the farmer to the FastAPI
+// cloud brain (server verifies it). Returns null when signed out / unavailable.
+export async function getAuthToken() {
+  try {
+    const user = auth?.currentUser;
+    if (!user) return null;
+    return await user.getIdToken(true);
+  } catch {
+    return null;
+  }
+}
+
 // ---- Firestore cloud sync (best-effort, never blocks) ----------------------
 
 // Save the farmer's profile to Firestore under a phone-derived id.

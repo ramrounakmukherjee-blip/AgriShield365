@@ -514,3 +514,46 @@ export function recordAdvisoryHistory(profile, weather, advisories) {
     /* history is non-critical */
   }
 }
+
+// ---------- background cloud brain (FastAPI on Render), never blocks UI ----------
+/**
+ * Fire-and-forget: after the local advisory is shown, ping the FastAPI cloud
+ * brain so the Python rule engine also runs the advisory and server-side
+ * history can be persisted. Wrapped so a sleeping/offline backend is silent.
+ * Returns a small result for logging/diagnostics only.
+ */
+export async function cloudSyncAdvisory(profile, weather) {
+  try {
+    const { getAuthToken } = await import("./firebase");
+    const idToken = (await getAuthToken?.()) || null;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 75000); // tolerate Render cold start
+    const res = await fetch(`${API_BASE}/get-advisory`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lat: profile.lat,
+        lng: profile.lng,
+        crop: profile.crop,
+        idToken,
+        daysElapsed: daysSinceSowing(profile),
+        irrigation: profile.irrigation || "flood",
+        soil: profile.soil || "loamy",
+        area: Number(profile.area) || 1,
+      }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) {
+      console.warn("[cloud] advisory sync returned", res.status);
+      return { ok: false, status: res.status };
+    }
+    const data = await res.json();
+    console.info("[cloud] advisory processed by server (persisted:", data.persisted, ")");
+    return { ok: true, persisted: !!data.persisted };
+  } catch (e) {
+    // Backend asleep / offline — the local advisory already works.
+    console.info("[cloud] advisory sync skipped (offline/asleep)");
+    return { ok: false, reason: "unavailable" };
+  }
+}
