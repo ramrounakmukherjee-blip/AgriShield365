@@ -73,3 +73,21 @@ def save_farm(uid: str, farm: dict) -> bool:
     except Exception as e:
         print(f"[firestore] farm save failed: {e}")
         return False
+
+
+def save_scan(uid: str, crop: str | None, scan: dict) -> bool:
+    """Persist one Gemini leaf-scan result under the user's history."""
+    client = db()
+    if client is None or not uid:
+        return False
+    try:
+        from datetime import datetime, timezone
+        client.collection("users").document(uid).collection("scans").add({
+            "crop": crop,
+            "scan": scan,
+            "createdAt": datetime.now(timezone.utc).isoformat(),
+        })
+        return True
+    except Exception as e:
+        print(f"[firestore] scan save failed: {e}")
+        return False

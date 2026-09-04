@@ -21,6 +21,7 @@ from pydantic import BaseModel, Field
 from .weather_api import get_weather
 from .rules_engine import compute_advisory, THREATS, CROPS
 from . import firestore_db
+from . import gemini_scan
 
 app = FastAPI(title="AgriShield 365 API", version="1.0")
 
@@ -112,16 +113,48 @@ def get_advisory(req: AdvisoryRequest):
 
 
 class ScanRequest(BaseModel):
-    # Leaf-scan (Gemini) lands here in a later phase — accepts the photo URL/path.
+    # Leaf photo is sent as a browser data URL (data:image/jpeg;base64,...).
+    # The Gemini key stays on the server; only the diagnosis JSON is returned.
     lat: float | None = None
     lng: float | None = None
     crop: str | None = None
-    imageUrl: str | None = None
+    image: str | None = None
+    imageUrl: str | None = None  # accepted for compatibility
+    idToken: str | None = None
+    uid: str | None = None
+
+
+_SCAN_ERROR_STATUS = {
+    "SCAN_NOT_CONFIGURED": (503, "Leaf scan is not configured on the server (GEMINI_API_KEY missing)."),
+    "NO_IMAGE": (400, "No leaf image was provided."),
+    "SCAN_PROVIDER_UNAVAILABLE": (502, "The AI scan service is unavailable. Please try again."),
+    "SCAN_PROVIDER_ERROR": (502, "The AI scan service rejected the request. Please try again."),
+    "SCAN_PARSE_ERROR": (502, "Could not read the AI diagnosis. Please retake the photo."),
+}
 
 
 @app.post("/scan")
 def scan_leaf(req: ScanRequest):
-    # Placeholder: Gemini Vision call will live here (keeps the API key on the
-    # server). Until then the frontend uses the offline symptom checker.
-    return {"status": "not_implemented",
-            "message": "Leaf scan (Gemini) is being wired up; use the symptom checker."}
+    image = req.image or req.imageUrl
+    if not gemini_scan.configured():
+        # Graceful: frontend falls back to the offline symptom checker.
+        raise HTTPException(status_code=503, detail=_SCAN_ERROR_STATUS["SCAN_NOT_CONFIGURED"][1])
+    if not image:
+        raise HTTPException(status_code=400, detail=_SCAN_ERROR_STATUS["NO_IMAGE"][1])
+    try:
+        result = gemini_scan.scan_leaf_image(image, crop_hint=req.crop)
+    except RuntimeError as e:
+        code = str(e)
+        status, msg = _SCAN_ERROR_STATUS.get(code, (502, "Leaf scan failed. Please try again."))
+        raise HTTPException(status_code=status, detail=msg)
+
+    # Best-effort persistence of the scan (only if a Firebase admin is set up).
+    uid = _verify_token(req.idToken) or req.uid
+    saved = False
+    if uid:
+        try:
+            saved = firestore_db.save_scan(uid, req.crop, result)
+        except Exception:
+            saved = False
+
+    return {"status": "ok", "uid": uid, "persisted": saved, "scan": result}
