@@ -172,6 +172,20 @@ export const THREATS = [
   },
 ];
 
+// Plain-English trigger explanation for each threat (shown via "Why this alert?").
+// English only — the app falls back to English for other languages.
+const TRIGGER_WHY = {
+  rice_blast: "Fires when humidity stays ≥90% with cool temperatures (22–28°C) for ~3 days during a vulnerable stage — the damp, cool mornings the blast fungus needs.",
+  sheath_blight: "Fires when it stays hot and humid (>28°C, >85% RH) for ~3 days under a dense, wet canopy — conditions that spread sheath blight.",
+  late_blight: "Fires on a cool wet spell (10–24°C, ≥90% RH) with rain or dew within ~2 days — late blight spreads fastest in exactly these conditions.",
+  early_blight: "Fires in warm humid weather (24–30°C, ≥75% RH) over ~4 days, especially on older, mature foliage.",
+  bacterial_blight: "Fires after ≥5 mm of rain-splash with warm weather (25–35°C, ≥70% RH) within ~2 days — rain drops spread the bacteria from leaf to leaf.",
+  fusarium_wilt: "Fires when waterlogging (≥20 mm rain) is followed by a hot 30–38°C spell — the soil fungus invades roots after flooding stress.",
+  bollworm: "Fires in warm humid conditions (25–33°C, 60–88% RH) during the flowering/boll stage over ~5 days without heavy rain — peak bollworm activity.",
+  whitefly: "Fires in prolonged hot, dry weather (>30°C, 45–70% RH) with little or no rain — whitefly nymphs multiply rapidly in drought.",
+};
+THREATS.forEach((t) => { if (TRIGGER_WHY[t.id]) t.why = TRIGGER_WHY[t.id]; });
+
 function dayMatches(day, t) {
   const tempOk = day.tempMax >= t.minTemp && day.tempMin <= t.maxTemp;
   let humOk = true;
@@ -245,6 +259,7 @@ export function evaluateWeather(daily, hourly) {
         bn: "মাঠের নালা এখনই পরিষ্কার করুন, স্প্রে পিছিয়ে দিন এবং কাটা ফসল ঢেকে রাখুন।",
         mr: "शेतातील नाले आता साफ करा, फवारणी पुढे ढकला आणि कापणी केलेले पीक झाकून ठेवा.",
       },
+      why: { en: "Fires when more than ~60 mm of rain is forecast over the next 72 hours (or ≥60 mm on a single day) — enough to cause runoff, waterlogging and fungicide wash-off." },
     });
   }
 
@@ -267,6 +282,7 @@ export function evaluateWeather(daily, hourly) {
         bn: "ভোরে বা সন্ধ্যায় সেচ দিন; বাষ্প কমাতে মাটিতে মালচ দিন।",
         mr: "फक्त पहाटे किंवा सायंकाळी पाणी द्या; बाष्पीभवन कमी करण्यास आच्छादन करा.",
       },
+      why: { en: "Fires when at least 2 of the next 4 days are forecast ≥38°C — a heatwave window that stresses standing crops and spikes evapotranspiration." },
     });
   }
 
@@ -289,6 +305,7 @@ export function evaluateWeather(daily, hourly) {
         bn: "ফুল আসা অংশে আগে সেচ দিন; একবার ভারী সেচের চেয়ে হালকা বারবার সেচ ভালো।",
         mr: "सिंचनात फुलोरा भागाला प्राधान्य द्या; एकदा जास्त पाण्यापेक्षा हलके वारंवार पाणी चांगले.",
       },
+      why: { en: "Fires when 5+ of the next 6 days show <1 mm rain — soil moisture is dropping and the crop will soon need irrigation, especially in any flowering stage." },
     });
   }
 

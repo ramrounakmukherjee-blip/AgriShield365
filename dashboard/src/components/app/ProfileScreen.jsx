@@ -8,11 +8,13 @@ import {
   LogOut,
   RefreshCw,
   Globe,
+  History,
+  CheckCircle2,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import { LANGUAGES } from "../../lib/i18n";
 import { CROPS, SOIL_TYPES, IRRIGATION_TYPES } from "../../lib/agri";
-import { saveProfile } from "../../lib/api";
+import { saveProfile, getAdvisoryHistory } from "../../lib/api";
 
 const inputCls =
   "w-full rounded-xl border-2 border-stone-200 focus:border-emerald-500 bg-white px-3.5 py-2.5 text-base font-medium text-stone-800 outline-none";
@@ -25,6 +27,8 @@ export default function ProfileScreen({ profile, onSignOut, onSave, onResetSetup
   );
   const [installEvt, setInstallEvt] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [history] = useState(() => getAdvisoryHistory());
+  const [showAllHistory, setShowAllHistory] = useState(false);
 
   useEffect(() => {
     const handler = (e) => {
@@ -207,6 +211,59 @@ export default function ProfileScreen({ profile, onSignOut, onSave, onResetSetup
             <span className="block text-xs font-normal text-emerald-700">{t("profile.installHint")}</span>
           </span>
         </button>
+      )}
+
+      {/* Advisory history */}
+      {history.length > 0 && (
+        <div className="rounded-2xl border border-stone-200 bg-white p-5">
+          <h3 className="font-extrabold text-stone-800 flex items-center gap-2">
+            <History className="w-5 h-5 text-emerald-600" />
+            {tr({ en: "Advisory history", hi: "सलाह इतिहास", bn: "পরামর্শের ইতিহাস", mr: "सल्ला इतिहास" })}
+          </h3>
+          <p className="text-xs text-stone-500 mt-1">
+            {tr({ en: "Saved on this device and backed up to the cloud when you're signed in.", hi: "इस डिवाइस पर सुरक्षित और लॉगिन पर क्लाउड में बैकअप।", bn: "এই ডিভাইসে সংরক্ষিত এবং সাইন ইন থাকলে ক্লাউডে ব্যাকআপ।", mr: "या डिव्हाइसवर सेव्ह आणि लॉगिन असताना क्लाउड बॅकअप." })}
+          </p>
+          <ul className="mt-3 flex flex-col gap-2">
+            {history.slice(0, showAllHistory ? 60 : 6).map((h, i) => (
+              <li key={i} className="flex items-center gap-3 rounded-xl bg-stone-50 px-3 py-2.5">
+                <span className="text-xl">{h.emoji || "🌱"}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-stone-700 truncate">
+                    {h.topAlert ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className={`inline-block w-2 h-2 rounded-full ${h.topKind === "critical" ? "bg-red-500" : h.topKind === "warning" ? "bg-amber-500" : "bg-emerald-500"}`} />
+                        {h.topAlert}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-emerald-700">
+                        <CheckCircle2 className="w-4 h-4" />
+                        {tr({ en: "No active alerts", hi: "कोई सक्रिय चेतावनी नहीं", bn: "কোনো সক্রিয় সতর্কতা নেই", mr: "कोणताही सक्रिय इशारा नाही" })}
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-[11px] text-stone-400">
+                    {new Date(h.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · {h.temp}°C · {h.humidity}% RH
+                  </p>
+                </div>
+                {h.score > 0 && (
+                  <span className={`shrink-0 text-[10px] font-bold rounded-full px-2 py-0.5 ${h.score >= 80 ? "bg-red-100 text-red-700" : h.score >= 60 ? "bg-amber-100 text-amber-700" : "bg-stone-200 text-stone-600"}`}>
+                    {h.score}%
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+          {history.length > 6 && (
+            <button
+              onClick={() => setShowAllHistory((v) => !v)}
+              className="mt-3 text-xs font-bold text-emerald-700 hover:underline"
+            >
+              {showAllHistory
+                ? tr({ en: "Show less", hi: "कम दिखाएँ", bn: "কম দেখান", mr: "कमी दाखवा" })
+                : tr({ en: `View all ${history.length} entries`, hi: `सभी ${history.length} प्रविष्टियाँ देखें`, bn: `সব ${history.length}টি দেখুন`, mr: `सर्व ${history.length} नोंदी पहा` })}
+            </button>
+          )}
+        </div>
       )}
 
       {/* Sign out */}

@@ -207,6 +207,7 @@ export function getAdvisories(profile, weather) {
     score: r.score,
     title: r.threat.name,
     detail: r.threat.action,
+    why: r.threat.why || null,
   }));
   const weatherAlerts = evaluateWeather(weather.daily, weather.hourly);
   return { alerts: [...threatAlerts, ...weatherAlerts], crop, stage };
@@ -404,4 +405,112 @@ export function fileToScaledDataUrl(file, maxDim = 1024, quality = 0.8) {
     };
     reader.readAsDataURL(file);
   });
+}
+
+// ---------- GPS field location (reverse geocode; free, no API key) ----------
+export async function reverseGeocode(lat, lng) {
+  try {
+    if (lat == null || lng == null || (lat === 0 && lng === 0)) return null;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 6000);
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
+      { signal: ctrl.signal }
+    );
+    clearTimeout(timer);
+    if (!res.ok) return null;
+    const d = await res.json();
+    const place = [...new Set([d.locality || d.city, d.principalSubdivision].filter(Boolean))].join(", ");
+    return { place: place || null, country: d.countryName || null, lat, lng };
+  } catch {
+    return null;
+  }
+}
+
+// ---------- shareable advisory summary ----------
+const enText = (v) => (v && typeof v === "object" ? v.en : v) || "";
+
+export function buildAdvisorySummary(profile, weather, advisories) {
+  const { alerts, crop } = advisories;
+  const date = new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  const cur = weather.current;
+  const L = [];
+  L.push("🌱 AgriShield 365 — field advisory");
+  L.push(`${crop.emoji} ${enText(crop.name)} · ${profile.village ? profile.village + " · " : ""}${date}`);
+  L.push(`🌦️ Now: ${Math.round(cur.temp)}°C, ${Math.round(cur.humidity)}% humidity`);
+  if (!alerts.length) {
+    L.push("✅ No active alerts — conditions look favourable for your crop.");
+  } else {
+    L.push(`⚠️ ${alerts.length} active alert${alerts.length > 1 ? "s" : ""}:`);
+    alerts.slice(0, 4).forEach((a, i) => {
+      L.push(`${i + 1}. ${enText(a.title)}`);
+      const detail = enText(a.detail);
+      if (detail) L.push(`   → ${detail}`);
+    });
+  }
+  L.push("\nSent from AgriShield 365 — crop protection, 365 days a year.");
+  return L.join("\n");
+}
+
+export async function shareAdvisory(text) {
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: "AgriShield 365 advisory", text });
+      return "shared";
+    }
+    await navigator.clipboard.writeText(text);
+    return "copied";
+  } catch {
+    try {
+      await navigator.clipboard.writeText(text);
+      return "copied";
+    } catch {
+      return "failed";
+    }
+  }
+}
+
+// ---------- advisory history (local first, best-effort cloud) ----------
+const HISTORY_KEY = "agrishield365_history_v1";
+
+export function getAdvisoryHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+export function recordAdvisoryHistory(profile, weather, advisories) {
+  try {
+    const { alerts, crop } = advisories;
+    const top = alerts[0];
+    const day = new Date().toISOString().slice(0, 10);
+    const entry = {
+      date: new Date().toISOString(),
+      day,
+      crop: crop.id,
+      cropName: enText(crop.name),
+      emoji: crop.emoji,
+      temp: Math.round(weather.current.temp),
+      humidity: Math.round(weather.current.humidity),
+      alertCount: alerts.length,
+      topAlert: top ? enText(top.title) : null,
+      topKind: top?.kind || "ok",
+      score: top?.score ?? 0,
+    };
+    const hist = getAdvisoryHistory();
+    // Avoid duplicate rows for the same day + crop + alert.
+    if (hist[0] && hist[0].day === day && hist[0].crop === entry.crop && hist[0].topAlert === entry.topAlert) {
+      return;
+    }
+    hist.unshift(entry);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(hist.slice(0, 60)));
+    // Best-effort cloud copy (never blocks; works when signed in).
+    import("./firebase")
+      .then((m) => m.cloudSaveAdvisory && m.cloudSaveAdvisory(profile, entry))
+      .catch(() => {});
+  } catch {
+    /* history is non-critical */
+  }
 }

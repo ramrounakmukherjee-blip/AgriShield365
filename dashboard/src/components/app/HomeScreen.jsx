@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertTriangle,
@@ -15,13 +15,22 @@ import {
   Camera,
   BookOpen,
   FlaskConical,
+  MapPin,
+  Share2,
+  ChevronDown,
+  Loader2,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
 import DiagnoseModal from "./DiagnoseModal";
 import ScanModal from "./ScanModal";
 import { weatherEmoji } from "../../lib/weather";
-import { getImpactStats } from "../../lib/api";
+import {
+  getImpactStats,
+  reverseGeocode,
+  buildAdvisorySummary,
+  shareAdvisory,
+} from "../../lib/api";
 
 const alertStyles = {
   critical: "bg-red-50 border-red-300 text-red-900",
@@ -42,6 +51,32 @@ export default function HomeScreen({ profile, weather, advisories }) {
   const stats = getImpactStats();
   const [showDiagnose, setShowDiagnose] = useState(false);
   const [showScan, setShowScan] = useState(false);
+  const [loc, setLoc] = useState(null);
+  const [openWhy, setOpenWhy] = useState({});
+  const [shareState, setShareState] = useState("");
+
+  // Reverse-geocode the field GPS to a readable place name (free, no key).
+  useEffect(() => {
+    let alive = true;
+    reverseGeocode(profile.lat, profile.lng).then((p) => {
+      if (alive && p) setLoc(p);
+    });
+    return () => { alive = false; };
+  }, [profile.lat, profile.lng]);
+
+  const onShare = async () => {
+    const text = buildAdvisorySummary(profile, weather, advisories);
+    const r = await shareAdvisory(text);
+    setShareState(r === "shared" ? t("home.shareDone") : r === "copied" ? t("home.shareCopied") : "");
+    setTimeout(() => setShareState(""), 2500);
+  };
+
+  const fieldLabel = loc?.place
+    || profile.village
+    || t("home.yourField");
+  const fieldSub = loc?.place
+    ? `${profile.lat.toFixed(4)}, ${profile.lng.toFixed(4)} · ${loc.country || ""}`
+    : `${profile.lat.toFixed(4)}°, ${profile.lng.toFixed(4)}°`;
 
   const highest = alerts.reduce((m, a) => {
     if (a.kind === "critical") return Math.max(m, 90);
@@ -64,21 +99,44 @@ export default function HomeScreen({ profile, weather, advisories }) {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* GPS field location */}
+      <div className="flex items-center gap-3 rounded-2xl bg-white border border-stone-200 px-4 py-3">
+        <div className="w-10 h-10 shrink-0 rounded-xl bg-emerald-100 text-emerald-700 grid place-items-center">
+          <MapPin className="w-5 h-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-stone-400">{t("home.field")}</p>
+          <p className="font-extrabold text-stone-800 text-sm truncate">{fieldLabel}</p>
+          <p className="text-[11px] text-stone-500 truncate">{fieldSub}</p>
+        </div>
+        <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 rounded-full px-2.5 py-1">
+          GPS
+        </span>
+      </div>
+
       {/* Alerts */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
           <h2 className="text-sm font-extrabold uppercase tracking-wider text-stone-500">
             {t("home.activeAlerts")}
           </h2>
-          <SpeakButton
-            textObj={{
-              en: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
-              hi: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
-              bn: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
-              mr: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
-            }}
-            label={t("app.listen")}
-          />
+          <div className="flex items-center gap-2">
+            <SpeakButton
+              textObj={{
+                en: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
+                hi: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
+                bn: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
+                mr: alerts.map((a) => `${tr(a.title)}. ${tr(a.detail)}`).join(". "),
+              }}
+              label={t("app.listen")}
+            />
+            <button
+              onClick={onShare}
+              className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1.5 transition active:scale-95"
+            >
+              <Share2 className="w-3.5 h-3.5" /> {shareState || t("home.share")}
+            </button>
+          </div>
         </div>
         {alerts.length === 0 ? (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex items-start gap-3 text-emerald-900">
@@ -114,6 +172,30 @@ export default function HomeScreen({ profile, weather, advisories }) {
                       )}
                     </div>
                     <p className="text-sm mt-0.5 opacity-90 leading-relaxed">{tr(a.detail)}</p>
+                    {a.why && (
+                      <div className="mt-2">
+                        <button
+                          onClick={() => setOpenWhy((s) => ({ ...s, [a.id + i]: !s[a.id + i] }))}
+                          className="inline-flex items-center gap-1 text-[11px] font-bold opacity-80 hover:opacity-100 transition"
+                        >
+                          <FlaskConical className="w-3 h-3" />
+                          {t("home.why")}
+                          <ChevronDown className={`w-3 h-3 transition-transform ${openWhy[a.id + i] ? "rotate-180" : ""}`} />
+                        </button>
+                        <AnimatePresence>
+                          {openWhy[a.id + i] && (
+                            <motion.p
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="text-[11px] leading-relaxed mt-1.5 rounded-lg bg-black/5 px-2.5 py-2"
+                            >
+                              {tr(a.why)}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
