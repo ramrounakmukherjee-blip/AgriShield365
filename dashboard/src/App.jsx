@@ -8,6 +8,7 @@ import AppShell from "./components/app/AppShell";
 import { LANGUAGES } from "./lib/i18n";
 import { getProfile, saveProfile, getPhone, savePhone } from "./lib/api";
 import { stopSpeaking, warmVoices } from "./lib/useVoice";
+import { cloudSaveFarm } from "./lib/firebase";
 
 const LANG_KEY = "agrishield365_lang";
 
@@ -53,13 +54,15 @@ export default function App() {
   const handleOnboardingComplete = (farm) => {
     const full = { ...farm, phone };
     setProfile(full);
-    saveProfile(full);
+    saveProfile(full);            // local (instant + offline)
+    cloudSaveFarm(full);          // cloud (best-effort, never blocks)
     setStage("analyzing");
   };
 
   const handleProfileChange = (updated) => {
     setProfile(updated);
-    saveProfile(updated);
+    saveProfile(updated);         // local
+    cloudSaveFarm(updated);       // cloud
   };
 
   const handleSignOut = () => {

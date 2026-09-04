@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Phone, ShieldCheck, ArrowRight, Edit3, Loader2 } from "lucide-react";
 import { useLang } from "../lib/useLang";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { sendRealOtp, confirmRealOtp, firebaseReady } from "../lib/firebase";
 
 export default function Login({ onVerified, returningName }) {
   const { t } = useLang();
@@ -11,33 +12,49 @@ export default function Login({ onVerified, returningName }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [authMode, setAuthMode] = useState(null); // "real" | "demo"
 
   const validPhone = /^[6-9]\d{9}$/.test(phone);
 
-  const sendOtp = () => {
+  const sendOtp = async () => {
     if (!validPhone) {
       setError(t("login.phoneError"));
       return;
     }
     setError("");
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      setStep("otp");
-    }, 900);
+    // Try real Firebase phone OTP; fall back to demo OTP if unavailable.
+    const res = firebaseReady() ? await sendRealOtp("+91" + phone) : { ok: false };
+    setSending(false);
+    setAuthMode(res.ok ? "real" : "demo");
+    setStep("otp");
   };
 
-  const verifyOtp = () => {
-    if (otp !== "1357") {
-      setError(t("login.otpError"));
+  const verifyOtp = async () => {
+    setError("");
+    setVerifying(true);
+    if (authMode === "real") {
+      const res = await confirmRealOtp(otp);
+      if (res.ok) {
+        onVerified(phone, res.uid);
+        return;
+      }
+      // real auth rejected it — fall through to the demo check below
+    }
+    if (otp === "1357") {
+      onVerified(phone);
       return;
     }
-    setError("");
-    onVerified(phone);
+    setVerifying(false);
+    setError(t("login.otpError"));
   };
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-emerald-950 via-emerald-900 to-green-800 flex flex-col">
+      {/* invisible reCAPTCHA anchor for Firebase phone auth */}
+      <div id="recaptcha-container" />
+
       {/* Language switcher */}
       <div className="absolute top-4 right-4 z-20">
         <LanguageSwitcher />
@@ -135,7 +152,7 @@ export default function Login({ onVerified, returningName }) {
                   type="tel"
                   inputMode="numeric"
                   autoFocus
-                  maxLength={4}
+                  maxLength={6}
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                   onKeyDown={(e) => e.key === "Enter" && verifyOtp()}
@@ -148,11 +165,19 @@ export default function Login({ onVerified, returningName }) {
 
               <button
                 onClick={verifyOtp}
-                disabled={otp.length !== 4}
+                disabled={otp.length < 4 || verifying}
                 className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition px-6 py-4 text-lg font-bold text-white shadow-lg shadow-emerald-600/30"
               >
-                {t("login.verify")}
-                <ArrowRight className="w-5 h-5" />
+                {verifying ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" /> {t("login.sending")}
+                  </>
+                ) : (
+                  <>
+                    {t("login.verify")}
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
               </button>
 
               <p className="mt-4 text-center text-xs text-stone-400">{t("login.demoNote")}</p>

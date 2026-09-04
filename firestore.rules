@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Farm profiles and their advisory history.
+    // Require a signed-in user (Firebase Auth). The app also keeps a local
+    // offline copy, so demo logins (no auth) still work on-device; they just
+    // don't write to the cloud.
+    match /farms/{farmId} {
+      allow read, write: if request.auth != null;
+
+      match /advisories/{advId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    // Everything else is locked down.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
