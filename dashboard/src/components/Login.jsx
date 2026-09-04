@@ -51,10 +51,7 @@ export default function Login({ onVerified, returningName }) {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-emerald-950 via-emerald-900 to-green-800 flex flex-col">
-      {/* invisible reCAPTCHA anchor for Firebase phone auth */}
-      <div id="recaptcha-container" />
-
+      <div className="min-h-[100dvh] bg-gradient-to-b from-emerald-950 via-emerald-900 to-green-800 flex flex-col">
       {/* Language switcher */}
       <div className="absolute top-4 right-4 z-20">
         <LanguageSwitcher />
@@ -112,6 +109,12 @@ export default function Login({ onVerified, returningName }) {
               </div>
 
               {error && <p className="mt-3 text-sm text-red-600 font-medium">{error}</p>}
+
+              {/* reCAPTCHA anchor — appears when you request a code; tick it
+                  for real SMS. Whitelisted test numbers skip it automatically. */}
+              <div className="mt-4 flex justify-center min-h-[78px]">
+                <div id="recaptcha-container" />
+              </div>
 
               <button
                 onClick={sendOtp}

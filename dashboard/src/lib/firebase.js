@@ -47,32 +47,34 @@ export function firebaseReady() {
 
 let recaptcha = null;
 
-// Ensure the invisible reCAPTCHA exists (required by Firebase phone auth).
-function getRecaptcha(buttonEl) {
+// Create a fresh visible reCAPTCHA. A solvable "I'm not a robot" checkbox is
+// what lets REAL (non-whitelisted) numbers pass app verification and receive a
+// genuine SMS. Whitelisted test numbers skip it automatically, so the instant
+// no-SMS demo keeps working.
+function createRecaptcha() {
   if (!auth) return null;
-  if (!recaptcha) {
-    try {
-      recaptcha = new RecaptchaVerifier(auth, buttonEl || "recaptcha-container", {
-        size: "invisible",
-      });
-    } catch (e) {
-      console.warn("[firebase] recaptcha failed:", e?.message);
-      return null;
-    }
+  try {
+    return new RecaptchaVerifier(auth, "recaptcha-container", {
+      size: "normal",
+    });
+  } catch (e) {
+    console.warn("[firebase] recaptcha failed:", e?.message);
+    return null;
   }
-  return recaptcha;
 }
 
 /**
  * Send a real OTP via Firebase. Returns { ok: true } on success, or
  * { ok:false, reason } so the UI can fall back to the demo flow.
  */
-export async function sendRealOtp(fullPhone, buttonEl) {
+export async function sendRealOtp(fullPhone) {
   if (!auth) return { ok: false, reason: "unavailable" };
   try {
-    const verifier = getRecaptcha(buttonEl);
-    if (!verifier) return { ok: false, reason: "recaptcha" };
-    const confirmation = await signInWithPhoneNumber(auth, fullPhone, verifier);
+    // Use a fresh verifier for each attempt (Firebase recommends this).
+    try { recaptcha?.clear?.(); } catch {}
+    recaptcha = createRecaptcha();
+    if (!recaptcha) return { ok: false, reason: "recaptcha" };
+    const confirmation = await signInWithPhoneNumber(auth, fullPhone, recaptcha);
     window.__agriConfirmation = confirmation;
     return { ok: true };
   } catch (e) {
