@@ -18,7 +18,6 @@ import {
   MapPin,
   Share2,
   ChevronDown,
-  Loader2,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
