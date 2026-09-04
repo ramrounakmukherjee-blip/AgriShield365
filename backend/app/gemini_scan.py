@@ -133,3 +133,34 @@ def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
         # Most likely an invalid/missing/forbidden API key.
         raise RuntimeError("SCAN_KEY_ERROR")
     raise RuntimeError("SCAN_PROVIDER_ERROR")
+
+
+def ping() -> dict:
+    """Tiny text-only call to verify the API key/models work. Used by the
+    /scan/health diagnostic URL so we can see Google's exact error without
+    uploading a photo."""
+    if not API_KEY:
+        return {"ok": False, "reason": "NO_KEY"}
+    body = {
+        "contents": [{"parts": [{"text": "Reply with the word OK."}]}],
+        "generationConfig": {"temperature": 0, "maxOutputTokens": 10},
+    }
+    for model in MODELS:
+        url = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"{model}:generateContent?key={API_KEY}"
+        )
+        try:
+            r = requests.post(url, json=body, timeout=30)
+        except requests.RequestException as e:
+            return {"ok": False, "reason": "NETWORK", "model": model, "error": str(e)[:200]}
+        if r.status_code == 200:
+            return {"ok": True, "model": model}
+        print(f"[scan-ping] {model} HTTP {r.status_code}: {r.text[:300]}")
+        if r.status_code != 404:
+            try:
+                msg = r.json().get("error", {}).get("message", r.text[:200])
+            except Exception:
+                msg = r.text[:200]
+            return {"ok": False, "reason": f"HTTP_{r.status_code}", "model": model, "message": msg}
+    return {"ok": False, "reason": "NO_MODEL"}

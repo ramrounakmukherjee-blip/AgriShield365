@@ -47,7 +47,9 @@ export default function ScanModal({ crop, onClose }) {
       setPhase("loading");
       const res = await scanLeaf(dataUrl, crop);
       if (!res.ok) {
-        setErrorMsg(res.status === 503 ? t("scan.offlineHint") : t("scan.error"));
+        const base = res.status === 503 ? t("scan.offlineHint") : t("scan.error");
+        const detail = res.detail ? `\n[${res.status || "?"}] ${res.detail}` : "";
+        setErrorMsg(base + detail);
         setPhase("error");
         return;
       }
@@ -266,7 +268,9 @@ export default function ScanModal({ crop, onClose }) {
                 <Stethoscope className="w-9 h-9 text-amber-600" />
               </div>
               <p className="font-bold text-stone-700">{t("scan.unavailableTitle")}</p>
-              <p className="text-sm text-stone-500 max-w-xs leading-relaxed">{errorMsg}</p>
+              <p className="text-sm text-stone-500 max-w-sm leading-relaxed whitespace-pre-line">
+                {errorMsg}
+              </p>
               <button
                 onClick={reset}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 text-white font-bold px-6 py-3 hover:bg-emerald-500 transition"

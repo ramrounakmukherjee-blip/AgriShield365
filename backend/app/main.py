@@ -147,7 +147,8 @@ def scan_leaf(req: ScanRequest):
     except RuntimeError as e:
         code = str(e)
         status, msg = _SCAN_ERROR_STATUS.get(code, (502, "Leaf scan failed. Please try again."))
-        raise HTTPException(status_code=status, detail=msg)
+        print(f"[scan] returning {status} {code}: {msg}")
+        raise HTTPException(status_code=status, detail=f"[{code}] {msg}")
 
     # Best-effort persistence of the scan (only if a Firebase admin is set up).
     uid = _verify_token(req.idToken) or req.uid
@@ -159,3 +160,10 @@ def scan_leaf(req: ScanRequest):
             saved = False
 
     return {"status": "ok", "uid": uid, "persisted": saved, "scan": result}
+
+
+@app.get("/scan/health")
+def scan_health():
+    """Diagnostic: verifies the Gemini key/models without a photo. Open
+    https://<service>/scan/health to see exactly why scan fails."""
+    return {"configured": gemini_scan.configured(), **gemini_scan.ping()}
