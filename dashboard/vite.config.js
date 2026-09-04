@@ -10,7 +10,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'assets/logo-agrishield365.jpg'],
+      // Assets are precached via workbox.globPatterns below; listing them again
+      // here caused an "add-to-cache-list-conflicting-entries" SW error.
       manifest: {
         name: 'AgriShield 365 — Farmer Protection',
         short_name: 'AgriShield365',
