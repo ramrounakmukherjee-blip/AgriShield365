@@ -123,9 +123,10 @@ export async function cloudSaveFarm(profile) {
   try {
     const id = "p" + String(profile.phone);
     await setDoc(doc(db, "farms", id), { ...profile, updatedAt: serverTimestamp() }, { merge: true });
+    console.log("[firebase] farm saved to cloud: farms/" + id);
     return true;
   } catch (e) {
-    console.warn("[firebase] farm save failed:", e?.message || e);
+    console.warn("[firebase] farm save failed:", e?.code || e?.message || e);
     return false;
   }
 }

@@ -45,6 +45,7 @@ export default function App() {
     const saved = getProfile();
     if (saved && saved.phone === verifiedPhone) {
       setProfile(saved);
+      cloudSaveFarm(saved);        // sync a returning farmer to the cloud too
       setStage("app");
     } else {
       setStage("onboarding");
