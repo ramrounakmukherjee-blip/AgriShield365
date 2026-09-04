@@ -5,28 +5,30 @@ The API key lives ONLY on the server (Render env var GEMINI_API_KEY) — it is
 never shipped to the browser. We call Gemini's REST endpoint directly with the
 `requests` library (already a dependency), so no extra SDK is needed.
 
-Focus crops/threats match the product scope: paddy (rice blast, sheath blight,
-bacterial blight), potato (late/early blight), cotton (fusarium wilt, bollworm,
+Models are discovered at runtime via the ListModels API, so the scan keeps
+working as Google renames/retire models (the v1beta name can change between
+years). Focus crops/threats: paddy (rice blast, sheath blight, bacterial
+blight), potato (late/early blight), cotton (fusarium wilt, bollworm,
 whitefly) — but the model can report any leaf condition it sees.
 """
 
-import base64
 import json
 import os
 import re
 
 import requests
 
-# Try current models in order (override with GEMINI_MODEL). Newer API keys may
-# only have access to the latest model; we fall back so the scan always finds a
-# model that works.
-MODELS = [m for m in [
+API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+
+# Preferred model order (newest/cheap first). These are only a preference — the
+# live ListModels discovery below picks whichever actually exist for the key.
+PREFERRED_MODELS = [m for m in [
     os.environ.get("GEMINI_MODEL", "").strip(),
+    "gemini-3-flash",
     "gemini-2.5-flash",
     "gemini-2.0-flash",
     "gemini-1.5-flash",
 ] if m]
-API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 
 PROMPT = """You are an agricultural plant-pathologist assistant helping a
 smallholder farmer in India. Look at the photo.
@@ -58,20 +60,75 @@ def configured() -> bool:
     return bool(API_KEY)
 
 
+def _list_models_raw():
+    """Return (status, list_of_model_names, message). Names support
+    generateContent."""
+    try:
+        r = requests.get(
+            f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}",
+            timeout=20,
+        )
+    except requests.RequestException as e:
+        return None, [], f"network: {e}"[:200]
+    if r.status_code != 200:
+        try:
+            msg = r.json().get("error", {}).get("message", r.text[:300])
+        except Exception:
+            msg = r.text[:300]
+        print(f"[scan] ListModels HTTP {r.status_code}: {msg}")
+        return r.status_code, [], msg
+    try:
+        data = r.json().get("models", [])
+    except ValueError:
+        data = []
+    names = [
+        m.get("name", "").replace("models/", "")
+        for m in data
+        if "generateContent" in (m.get("supportedGenerationMethods") or [])
+    ]
+    names = [n for n in names if n]
+    return 200, names, ""
+
+
+_models_cache = None
+
+
+def candidate_models():
+    """Models to try, in order: discovered (preferred first, then flash), then
+    static fallbacks."""
+    global _models_cache
+    if _models_cache is None:
+        status, names, _msg = _list_models_raw()
+        _models_cache = names if status == 200 else []
+        if _models_cache:
+            print(f"[scan] available generateContent models: {_models_cache[:8]}")
+    avail = _models_cache or []
+    ordered = []
+    for m in PREFERRED_MODELS:
+        if m in avail and m not in ordered:
+            ordered.append(m)
+    for m in avail:
+        if "flash" in m and m not in ordered:
+            ordered.append(m)
+    for m in avail:
+        if m not in ordered:
+            ordered.append(m)
+    for m in PREFERRED_MODELS:
+        if m not in ordered:
+            ordered.append(m)
+    return ordered
+
+
 def _extract_data_url(data_url: str):
-    """Turn a browser data URL ('data:image/jpeg;base64,XXXX') into (b64, mime)."""
+    """Turn a browser data URL into (base64, mime)."""
     m = re.match(r"data:([\w/+-]+);base64,(.*)", data_url or "", re.S)
     if m:
         return m.group(2).strip(), m.group(1)
-    # Already raw base64.
     return (data_url or "").strip(), "image/jpeg"
 
 
 def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
-    """Send the leaf photo to Gemini and return a structured diagnosis dict.
-
-    Raises RuntimeError with a user-safe message on failure.
-    """
+    """Send the leaf photo to Gemini and return a structured diagnosis dict."""
     if not API_KEY:
         raise RuntimeError("SCAN_NOT_CONFIGURED")
     if not image_data_url:
@@ -97,9 +154,8 @@ def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
         },
     }
 
-    last_status = None
-    last_body = ""
-    for model in MODELS:
+    last_status, last_msg = None, ""
+    for model in candidate_models():
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/"
             f"{model}:generateContent?key={API_KEY}"
@@ -107,7 +163,7 @@ def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
         try:
             resp = requests.post(url, json=body, timeout=60)
         except requests.RequestException as e:
-            print(f"[scan] gemini request failed ({model}): {e}")
+            print(f"[scan] request failed ({model}): {e}")
             raise RuntimeError("SCAN_PROVIDER_UNAVAILABLE")
 
         if resp.status_code == 200:
@@ -122,45 +178,67 @@ def scan_leaf_image(image_data_url: str, crop_hint: str | None = None) -> dict:
             result.setdefault("model", model)
             return result
 
-        # 404 = model name not available -> try the next model. Anything else is
-        # a real error (bad/missing key, quota, policy).
-        last_status, last_body = resp.status_code, resp.text
-        print(f"[scan] gemini HTTP {resp.status_code} ({model}): {resp.text[:300]}")
+        try:
+            last_msg = resp.json().get("error", {}).get("message", resp.text[:300])
+        except ValueError:
+            last_msg = resp.text[:300]
+        last_status = resp.status_code
+        print(f"[scan] gemini HTTP {resp.status_code} ({model}): {last_msg}")
         if resp.status_code != 404:
-            break
+            break  # real error — stop trying models
 
     if last_status in (400, 401, 403):
-        # Most likely an invalid/missing/forbidden API key.
         raise RuntimeError("SCAN_KEY_ERROR")
     raise RuntimeError("SCAN_PROVIDER_ERROR")
 
 
 def ping() -> dict:
-    """Tiny text-only call to verify the API key/models work. Used by the
-    /scan/health diagnostic URL so we can see Google's exact error without
-    uploading a photo."""
+    """Diagnostic used by GET /scan/health: verifies the key, lists the models
+    the key can actually use, and makes a tiny text generation call."""
     if not API_KEY:
         return {"ok": False, "reason": "NO_KEY"}
+
+    status, names, msg = _list_models_raw()
+    if status != 200:
+        return {
+            "ok": False,
+            "reason": f"LIST_HTTP_{status}" if status else "NETWORK",
+            "message": msg,
+        }
+
+    # Prefer a flash model that exists.
+    chosen = None
+    for m in PREFERRED_MODELS:
+        if m in names:
+            chosen = m
+            break
+    if not chosen:
+        flash = [n for n in names if "flash" in n]
+        chosen = flash[0] if flash else (names[0] if names else None)
+    if not chosen:
+        return {"ok": False, "reason": "NO_GENERATE_MODEL", "available": names[:30]}
+
     body = {
         "contents": [{"parts": [{"text": "Reply with the word OK."}]}],
         "generationConfig": {"temperature": 0, "maxOutputTokens": 10},
     }
-    for model in MODELS:
-        url = (
-            f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{model}:generateContent?key={API_KEY}"
-        )
-        try:
-            r = requests.post(url, json=body, timeout=30)
-        except requests.RequestException as e:
-            return {"ok": False, "reason": "NETWORK", "model": model, "error": str(e)[:200]}
-        if r.status_code == 200:
-            return {"ok": True, "model": model}
-        print(f"[scan-ping] {model} HTTP {r.status_code}: {r.text[:300]}")
-        if r.status_code != 404:
-            try:
-                msg = r.json().get("error", {}).get("message", r.text[:200])
-            except Exception:
-                msg = r.text[:200]
-            return {"ok": False, "reason": f"HTTP_{r.status_code}", "model": model, "message": msg}
-    return {"ok": False, "reason": "NO_MODEL"}
+    url = (
+        f"https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{chosen}:generateContent?key={API_KEY}"
+    )
+    try:
+        r = requests.post(url, json=body, timeout=30)
+    except requests.RequestException as e:
+        return {"ok": False, "reason": "NETWORK", "model": chosen, "error": str(e)[:200]}
+    if r.status_code == 200:
+        return {
+            "ok": True,
+            "model": chosen,
+            "availableFlash": [n for n in names if "flash" in n][:12],
+        }
+    try:
+        emsg = r.json().get("error", {}).get("message", r.text[:300])
+    except ValueError:
+        emsg = r.text[:300]
+    print(f"[scan-ping] generate HTTP {r.status_code} ({chosen}): {emsg}")
+    return {"ok": False, "reason": f"GENERATE_HTTP_{r.status_code}", "model": chosen, "message": emsg}
