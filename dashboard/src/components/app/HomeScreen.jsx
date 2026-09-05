@@ -45,7 +45,7 @@ function whenLabel(daysAhead, t) {
 }
 
 export default function HomeScreen({ profile, weather, advisories }) {
-  const { t, tr, lang } = useLang();
+  const { t, tr } = useLang();
   const { alerts, crop, stage } = advisories;
   const cur = weather.current;
   const stats = getImpactStats();

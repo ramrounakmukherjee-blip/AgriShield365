@@ -29,8 +29,6 @@ const MOODS = {
 };
 
 let ctx = null;
-let master = null;
-let started = false;
 let chordTimer = 0;
 let pluckTimer = 0;
 let chordIdx = 0;
@@ -214,7 +212,6 @@ export async function startAmbient(opts = {}) {
       if (!AC) return false;
       ctx = new AC();
       nodes = buildGraph(ctx);
-      started = true;
       scheduleChords();
       schedulePluck();
       applyMood(mood);
@@ -272,7 +269,6 @@ export function stopAmbient() {
   const oldNodes = nodes;
   ctx = null;
   nodes = {};
-  started = false;
   chordIdx = 0;
   try {
     const t = oldCtx.currentTime;

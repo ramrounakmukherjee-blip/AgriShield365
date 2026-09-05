@@ -577,7 +577,7 @@ export async function cloudSyncAdvisory(profile, weather) {
     const data = await res.json();
     console.info("[cloud] advisory processed by server (persisted:", data.persisted, ")");
     return { ok: true, persisted: !!data.persisted };
-  } catch (e) {
+  } catch {
     // Backend asleep / offline — the local advisory already works.
     console.info("[cloud] advisory sync skipped (offline/asleep)");
     return { ok: false, reason: "unavailable" };

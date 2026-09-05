@@ -145,11 +145,11 @@ export default function CinematicStory({ onComplete, onSkip }) {
     return () => clearTimeout(id);
   }, [idx]);
 
-  // Reset the per-scene clock whenever the scene changes.
+  // Reset the per-scene clock whenever the scene changes. The progress bar
+  // is driven by the rAF master clock, which lands back on ~0 the next frame.
   useEffect(() => {
     idxRef.current = idx;
     elapsedRef.current = 0;
-    setProgress(0);
   }, [idx]);
 
   // Master clock: advances only while neither hold- nor lock-paused; the same

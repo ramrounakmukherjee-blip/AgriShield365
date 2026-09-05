@@ -197,7 +197,7 @@ export default function AgriSaathi({ profile, weather, advisories }) {
       const answer = answerQuestion(topic, ctx, lang);
       setMsgs((m) => [...m, { role: "saathi", text: answer }]);
       setThinking(false);
-    }, 550 + Math.random() * 350);
+    }, 650);
   }
 
   function onChip(topic) {

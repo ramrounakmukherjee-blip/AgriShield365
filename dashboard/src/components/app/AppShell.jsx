@@ -14,11 +14,10 @@ import MarketScreen from "./MarketScreen";
 import ProfileScreen from "./ProfileScreen";
 
 export default function AppShell({ profile, onSignOut, onProfileChange, onResetSetup }) {
-  const { t, lang, tr } = useLang();
+  const { t, tr } = useLang();
   const [tab, setTab] = useState("home");
   const [weather, setWeather] = useState(null);
   const [advisories, setAdvisories] = useState(null);
-  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -36,7 +35,7 @@ export default function AppShell({ profile, onSignOut, onProfileChange, onResetS
     return () => {
       alive = false;
     };
-  }, [profile, reloadKey]);
+  }, [profile]);
 
   const tabs = [
     { id: "home", icon: Home },

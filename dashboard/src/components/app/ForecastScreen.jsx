@@ -11,7 +11,7 @@ import {
   Legend,
 } from "recharts";
 import { useLang } from "../../lib/useLang";
-import { weatherEmoji, weekday, shortDate, hourLabel } from "../../lib/weather";
+import { weatherEmoji, weekday, hourLabel } from "../../lib/weather";
 
 const LOCALE = { en: "en-IN", hi: "hi-IN", bn: "bn-IN", mr: "mr-IN" };
 
