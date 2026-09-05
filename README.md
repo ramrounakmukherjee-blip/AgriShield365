@@ -40,7 +40,7 @@ The app **tells a story first, then becomes a tool** — a seven-scene cinematic
 | Feature | Detail |
 | --- | --- |
 | 🐛 **Pest & insect risk engine** | 8 rule-based threat models per crop (bollworm, whitefly, stem borer, aphid, blast, blight…) driven by live temperature, humidity, rain and growth stage — with a plain-language **"Why this alert?"** explanation for every warning |
-| 📷 **AI leaf scan** | Photo a leaf → Google Gemini vision identifies disease/pests with confidence, treatment & prevention. *(Premium tier in demo build; offline symptom checker always available.)* |
+| 📷 **Crop Health section** | The Home screen's **Crop Health** zone holds the two diagnosis tools: **AI leaf scan** — photo a leaf, Google Gemini vision identifies disease/pests with confidence, treatment & prevention *(premium tier in demo build)* — plus the **offline symptom checker**: tap the symptoms you see to get the likely cause and what to do, no connection needed |
 | 💧 **JalRakshak smart irrigation** | FAO-56 crop-coefficient (Kc) water budgeting → exact mm needed, litres per acre, and a 7-day irrigation plan that skips rain days, with best-time-of-day advice |
 | 🌦️ **7-day + 24-hour forecast** | Live Open-Meteo data (no API key), offline-cached with deterministic fallback — works in airplane mode |
 | ⚠️ **Disaster & flood warnings** | Heavy-rain, flood and storm risk surfaced at the top of the dashboard before the event |
