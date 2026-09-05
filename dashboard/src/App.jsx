@@ -93,6 +93,7 @@ export default function App() {
   const handleSignOut = () => {
     try {
       localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem("agrishield365_phone"); // legacy key — must clear too
     } catch {
       /* ignore */
     }

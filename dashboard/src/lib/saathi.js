@@ -304,8 +304,8 @@ export function routeQuestion(q) {
   if (/(weather|rain|temp|मौसम|बारिश|पानी का|आबो?हवा|বৃষ্টি|আবহাওয়া|হাওয়া|पावस|हवामान|पाऊस)/.test(s)) return "weather";
   if (/(pest|insect|disease|blight|borer|whitefly|bollworm|aphid|कीट|रोग|कीड|रोग|পোকা|রোগ)/.test(s)) return "pests";
   if (/(irrigate|irrigation|water|पानी|सिंचाई|जल|সেচ|জল|सिंचन|पाणी)/.test(s)) return "irrigation";
-  if (/(price|market|sell|mandis?|mandi|भाव|बेच|मंडी|দাম|বিক্রি|मंडई|भाव|विक्री|बाजार)/.test(s)) return "market";
-  if (/(how|where|use|help|guide|kaise|kahan|कैसे|कहाँ|मदद|की|কিভাবে|কোথায়|साहाय्य|कसे|कुठे|मदत)/.test(s)) return "help";
+  if (/(price|market|sell|cost|mandis?|mandi|भाव|दाम|कीमत|कितने|बेच|मंडी|দাম|বিক্রি|মান্ডি|मंडई|भाव|विक्री|बाजार|किंमत)/.test(s)) return "market";
+  if (/(how|where|use|help|guide|kaise|kahan|कैसे|कहाँ|मदद|कैसा|কিভাবে|কোথায়|साहाय्य|कसे|कुठे|मदत)/.test(s)) return "help";
   return "fallback";
 }
 
