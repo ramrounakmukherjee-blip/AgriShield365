@@ -11,6 +11,7 @@ import { stopSpeaking, warmVoices } from "./lib/useVoice";
 import { cloudSaveFarm } from "./lib/firebase";
 
 const LANG_KEY = "agrishield365_lang";
+const SESSION_KEY = "agrishield365_session";
 
 function hasSavedLanguage() {
   try {
@@ -20,11 +21,29 @@ function hasSavedLanguage() {
   }
 }
 
+function getSessionPhone() {
+  try {
+    return localStorage.getItem(SESSION_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+// Returning farmers skip the story + OTP entirely: if a verified session
+// exists and its farm profile is on this device, open straight in the app.
+function bootStage(savedPhone, savedProfile) {
+  if (savedPhone) {
+    if (savedProfile && savedProfile.phone === savedPhone) return "app";
+    return "onboarding"; // verified once, but farm setup was never finished
+  }
+  return hasSavedLanguage() ? "story" : "welcome";
+}
+
 export default function App() {
   // welcome -> story -> login -> onboarding -> analyzing -> app
-  const [stage, setStage] = useState(hasSavedLanguage() ? "story" : "welcome");
-  const [phone, setPhone] = useState(() => getPhone());
+  const [phone, setPhone] = useState(() => getSessionPhone() || getPhone());
   const [profile, setProfile] = useState(() => getProfile());
+  const [stage, setStage] = useState(() => bootStage(getSessionPhone() || getPhone(), getProfile()));
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,6 +61,11 @@ export default function App() {
   const handleVerified = (verifiedPhone) => {
     setPhone(verifiedPhone);
     savePhone(verifiedPhone);
+    try {
+      localStorage.setItem(SESSION_KEY, verifiedPhone); // stay signed in
+    } catch {
+      /* ignore */
+    }
     const saved = getProfile();
     if (saved && saved.phone === verifiedPhone) {
       setProfile(saved);
@@ -67,9 +91,14 @@ export default function App() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("agrishield365_phone");
+    try {
+      localStorage.removeItem(SESSION_KEY);
+    } catch {
+      /* ignore */
+    }
     setPhone("");
-    setStage("story");
+    setProfile(null);
+    setStage("login");
   };
 
   switch (stage) {

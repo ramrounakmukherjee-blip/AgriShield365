@@ -183,6 +183,10 @@ export default function Login({ onVerified, returningName }) {
               </button>
 
               <p className="mt-4 text-center text-xs text-stone-400">{t("login.demoNote")}</p>
+              <p className="mt-2 text-center text-[11px] text-stone-400/80 flex items-center justify-center gap-1.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                {t("login.staySignedIn")}
+              </p>
             </>
           )}
         </div>
