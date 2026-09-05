@@ -273,6 +273,11 @@ export default function ProfileScreen({ profile, onSignOut, onSave, onResetSetup
       >
         <LogOut className="w-4 h-4" /> {t("app.signOut")}
       </button>
+
+      {/* Build version (F12 console also logs this) */}
+      <p className="text-center text-[11px] text-stone-400 font-medium">
+        AgriShield 365 · v{/* eslint-disable-next-line no-undef */ __BUILD__} · {__BUILD_DATE__}
+      </p>
     </div>
   );
 }

@@ -47,11 +47,13 @@ def root():
 @app.get("/health")
 def health():
     # Lightweight route used to wake the free Render instance before a demo.
+    import os
     return {
         "status": "ok",
         "crops": list(CROPS.keys()),
         "threats": len(THREATS),
         "firebase": firestore_db.db() is not None,
+        "version": os.environ.get("RENDER_GIT_COMMIT", "local"),
     }
 
 
