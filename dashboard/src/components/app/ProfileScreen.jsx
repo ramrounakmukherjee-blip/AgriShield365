@@ -8,6 +8,7 @@ import {
   LogOut,
   RefreshCw,
   Globe,
+  Compass,
   History,
   CheckCircle2,
 } from "lucide-react";
@@ -265,6 +266,21 @@ export default function ProfileScreen({ profile, onSignOut, onSave, onResetSetup
           )}
         </div>
       )}
+
+      {/* Replay guided tour */}
+      <button
+        onClick={() => {
+          try {
+            localStorage.removeItem("agrishield365_tour_done_v1");
+          } catch {
+            /* ignore */
+          }
+          window.dispatchEvent(new Event("agrishield:replay-tour"));
+        }}
+        className="rounded-2xl border-2 border-emerald-200 text-emerald-700 font-bold px-5 py-3.5 inline-flex items-center justify-center gap-2 hover:bg-emerald-50 transition"
+      >
+        <Compass className="w-4 h-4" /> {tr({ en: "Replay guided tour", hi: "गाइडेड टूर दोबारा देखें", bn: "গাইডেড ট্যুর আবার দেখুন", mr: "मार्गदर्शित दौरा पुन्हा पहा" })}
+      </button>
 
       {/* Sign out */}
       <button

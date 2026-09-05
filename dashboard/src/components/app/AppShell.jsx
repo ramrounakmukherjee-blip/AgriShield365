@@ -6,6 +6,7 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import { getForecast, getAdvisories, recordAdvisoryHistory, cloudSyncAdvisory } from "../../lib/api";
 import { getSeason } from "../../lib/agri";
 import Loading from "./Loading";
+import AgriSaathi from "./AgriSaathi";
 import HomeScreen from "./HomeScreen";
 import ForecastScreen from "./ForecastScreen";
 import IrrigationScreen from "./IrrigationScreen";
@@ -140,6 +141,9 @@ export default function AppShell({ profile, onSignOut, onProfileChange, onResetS
           </motion.div>
         </AnimatePresence>
       </main>
+
+      {/* AgriSaathi — floating assistant + first-visit coach tour */}
+      {weather && advisories && <AgriSaathi profile={profile} weather={weather} advisories={advisories} />}
     </div>
   );
 }
