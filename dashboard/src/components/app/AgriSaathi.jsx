@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, X, Mic, MicOff, Send, Sparkles, Compass } from "lucide-react";
+import { X, Mic, MicOff, Send, Sparkles, Compass } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
+
+const MASCOT = "/assets/saathi-mascot.jpg";
 import {
   saathiStrings,
   buildSaathiContext,
@@ -71,7 +73,7 @@ const TOUR_STEPS = [
     },
   },
   {
-    icon: "🤖",
+    img: MASCOT,
     title: { en: "And me — AgriSaathi!", hi: "और मैं — अग्रिसाथी!", bn: "আর আমি — অগ্রিসাথী!", mr: "आणि मी — अग्रिसाथी!" },
     body: {
       en: "Tap the green button anytime to ask about weather, pests, water or market — type or tap the mic and speak. I work fully offline, in your language. Let's farm smart! 🌾",
@@ -101,9 +103,13 @@ function CoachTour({ step, onBack, onNext, onSkip, tr }) {
         className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6"
       >
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-100 grid place-items-center text-3xl shrink-0">
-            {s.icon}
-          </div>
+          {s.img ? (
+            <img src={s.img} alt="AgriSaathi" className="w-14 h-14 rounded-full object-cover ring-2 ring-emerald-200 shrink-0 bg-emerald-50" />
+          ) : (
+            <div className="w-14 h-14 rounded-2xl bg-emerald-100 grid place-items-center text-3xl shrink-0">
+              {s.icon}
+            </div>
+          )}
           <div>
             <p className="text-[11px] font-bold uppercase tracking-widest text-emerald-600">
               {step + 1} / {TOUR_STEPS.length}
@@ -259,11 +265,15 @@ export default function AgriSaathi({ profile, weather, advisories }) {
           onClick={openPanel}
           aria-label={L.open}
           title={L.open}
-          className="fixed bottom-5 right-4 sm:right-6 z-[60] inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white font-extrabold shadow-2xl shadow-emerald-600/40 pl-3.5 pr-4 py-3.5 hover:scale-105 active:scale-95 transition"
+          className="fixed bottom-5 right-4 sm:right-6 z-[60] inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white font-extrabold shadow-2xl shadow-emerald-600/40 pl-1.5 pr-4 py-1.5 hover:scale-105 active:scale-95 transition"
         >
           <span className="relative">
-            <Bot className="w-6 h-6" />
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-300 ring-2 ring-emerald-600 animate-pulse" />
+            <img
+              src={MASCOT}
+              alt=""
+              className="w-11 h-11 rounded-full object-cover ring-2 ring-white/70 bg-emerald-100"
+            />
+            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-amber-300 ring-2 ring-emerald-600 animate-pulse" />
           </span>
           <span className="hidden sm:inline text-sm">AgriSaathi</span>
         </motion.button>
@@ -281,9 +291,7 @@ export default function AgriSaathi({ profile, weather, advisories }) {
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-emerald-700 to-green-600 text-white px-4 py-3 flex items-center gap-3 shrink-0">
-              <div className="w-10 h-10 rounded-full bg-white/20 grid place-items-center">
-                <Bot className="w-6 h-6" />
-              </div>
+            <img src={MASCOT} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/40 bg-white/10 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="font-extrabold leading-tight flex items-center gap-1.5">
                   {L.title}
@@ -303,7 +311,10 @@ export default function AgriSaathi({ profile, weather, advisories }) {
             {/* Messages */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto px-3.5 py-3 space-y-3 bg-stone-50">
               {msgs.map((m, i) => (
-                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                <div key={i} className={`flex items-end gap-1.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  {m.role === "saathi" && (
+                    <img src={MASCOT} alt="" className="w-7 h-7 rounded-full object-cover ring-1 ring-emerald-200 shrink-0" />
+                  )}
                   <div
                     className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                       m.role === "user"
