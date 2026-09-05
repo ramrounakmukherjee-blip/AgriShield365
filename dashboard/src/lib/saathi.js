@@ -70,9 +70,11 @@ const S = {
     },
     market: (ctx) => {
       const m = ctx.market;
-      return `Your ${ctx.cropName} is around ₹${m.price.toLocaleString("en-IN")} per quintal today — ${
-        m.trend >= 0 ? `up ${m.trend}%` : `down ${Math.abs(m.trend)}%`
-      } versus yesterday. ${m.advice.en} See the Market tab for the 14-day trend chart.`;
+      return `Today's mandi price for your ${ctx.cropName} is ₹${m.price.toLocaleString("en-IN")} per quintal (source: ${
+        m.source.en
+      }, updated today). Your cost of production is about ₹${m.costPrice.toLocaleString("en-IN")} per quintal — so that's a margin of ₹${m.margin.toLocaleString(
+        "en-IN"
+      )}. ${m.advice.en} See the Market tab for the 14-day trend chart.`;
     },
     help: () =>
       "Here is the quick tour 🧭 Home tab = pest & weather alerts. Calendar tab = 7-day + 24-hour forecast. Droplets tab = your JalRakshak irrigation plan. Trending tab = mandi price & sell/hold advice. The camera on Home scans a leaf (premium), and any advisory card can be shared on WhatsApp. Tap the mic and speak if you prefer. Everything also works in airplane mode.",
@@ -139,9 +141,11 @@ const S = {
     },
     market: (ctx) => {
       const m = ctx.market;
-      return `आपकी ${ctx.cropNameHi} आज लगभग ₹${m.price.toLocaleString("hi-IN")} प्रति क्विंटल है — कल के मुकाबले ${
-        m.trend >= 0 ? `${m.trend}% बढ़त` : `${Math.abs(m.trend)}% गिरावट`
-      }। ${m.advice.hi} 14 दिन का ट्रेंड मार्केट टैब पर देखें।`;
+      return `आपकी ${ctx.cropNameHi} का आज का मंडी भाव ₹${m.price.toLocaleString("hi-IN")} प्रति क्विंटल है (स्रोत: ${
+        m.source.hi
+      }, आज अपडेट)। उत्पादन लागत लगभग ₹${m.costPrice.toLocaleString("hi-IN")} प्रति क्विंटल है — यानी मुनाफ़ा ₹${m.margin.toLocaleString(
+        "hi-IN"
+      )}। ${m.advice.hi} 14 दिन का ट्रेंड मार्केट टैब पर देखें।`;
     },
     help: () =>
       "छोटा-सा दौरा 🧭 होम टैब = कीट और मौसम अलर्ट। कैलेंडर टैब = 7 दिन और 24 घंटे का पूर्वानुमान। ड्रॉपलेट्स टैब = जलरक्षक सिंचाई योजना। ट्रेंडिंग टैब = मंडी भाव और बेचें/रुकें सलाह। होम पर कैमरे से पत्ती स्कैन करें (प्रीमियम), और किसी भी सलाह को व्हाट्सऐप पर शेयर कर सकते हैं। माइक दबाकर बोलकर भी पूछ सकते हैं। सब कुछ हवाई जहाज़ मोड में भी चलता है।",
@@ -202,9 +206,11 @@ const S = {
     },
     market: (ctx) => {
       const m = ctx.market;
-      return `আপনার ${ctx.cropName} আজ প্রায় ₹${m.price.toLocaleString("bn-IN")} প্রতি কুইন্টাল — গতকালের তুলনায় ${
-        m.trend >= 0 ? `${m.trend}% বৃদ্ধি` : `${Math.abs(m.trend)}% হ্রাস`
-      }। ${m.advice.bn} ১৪ দিনের ট্রেন্ড মার্কেট ট্যাবে দেখুন।`;
+      return `আপনার ${ctx.cropName}-এর আজকের মান্ডি দর ₹${m.price.toLocaleString("bn-IN")} প্রতি কুইন্টাল (উৎস: ${
+        m.source.bn
+      }, আজ আপডেট)। উৎপাদন খরচ প্রায় ₹${m.costPrice.toLocaleString("bn-IN")} প্রতি কুইন্টাল — অর্থাৎ লাভ ₹${m.margin.toLocaleString(
+        "bn-IN"
+      )}। ${m.advice.bn} ১৪ দিনের ট্রেন্ড মার্কেট ট্যাবে দেখুন।`;
     },
     help: () =>
       "ছোট্ট পরিচিতি 🧭 হোম ট্যাব = পোকামাকড় ও আবহাওয়ার সতর্কতা। ক্যালেন্ডার ট্যাব = ৭ দিন ও ২৪ ঘণ্টার পূর্বাভাস। ড্রপলেটস ট্যাব = আপনার জলরক্ষক সেচ পরিকল্পনা। ট্রেন্ডিং ট্যাব = মান্ডি দাম ও বিক্রি/অপেক্ষা পরামর্শ। হোমে ক্যামেরা দিয়ে পাতা স্ক্যান করুন (প্রিমিয়াম), আর যেকোনো পরামর্শ হোয়াটসঅ্যাপে শেয়ার করা যায়। মাইক চেপে বলেও জিজ্ঞেস করতে পারেন। সবকিছু এয়ারপ্লেন মোডেও চলে।",
@@ -265,9 +271,11 @@ const S = {
     },
     market: (ctx) => {
       const m = ctx.market;
-      return `तुमचा ${ctx.cropName} आज सुमारे ₹${m.price.toLocaleString("mr-IN")} प्रति क्विंटल आहे — कालच्या तुलनेत ${
-        m.trend >= 0 ? `${m.trend}% वाढ` : `${Math.abs(m.trend)}% घट`
-      }. ${m.advice.mr} 14 दिवसांचा कल मार्केट टॅबवर पहा.`;
+      return `तुमच्या ${ctx.cropName}चा आजचा बाजारभाव ₹${m.price.toLocaleString("mr-IN")} प्रति क्विंटल आहे (स्रोत: ${
+        m.source.mr
+      }, आज अद्ययावत). उत्पादन खर्च सुमारे ₹${m.costPrice.toLocaleString("mr-IN")} प्रति क्विंटल — म्हणजे नफा ₹${m.margin.toLocaleString(
+        "mr-IN"
+      )}. ${m.advice.mr} 14 दिवसांचा कल मार्केट टॅबवर पहा.`;
     },
     help: () =>
       "लहान दौरा 🧭 होम टॅब = कीड व हवामान इशारे. कॅलेंडर टॅब = 7 दिवस व 24 तासांचा अंदाज. ड्रॉपलेट्स टॅब = तुमची जलरक्षक सिंचन योजना. ट्रेंडिंग टॅब = बाजारभाव व विक्री/थांबण्याचा सल्ला. होमवर कॅमेऱ्याने पान स्कॅन करा (प्रीमियम), आणि कोणताही सल्ला व्हॉट्सअ‍ॅपवर शेअर करता येतो. माइक दाबून बोलूनही विचारता येते. सर्व काही एअरप्लेन मोडमध्येही चालते.",

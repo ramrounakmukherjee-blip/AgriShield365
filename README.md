@@ -44,7 +44,7 @@ The app **tells a story first, then becomes a tool** — a seven-scene cinematic
 | 💧 **JalRakshak smart irrigation** | FAO-56 crop-coefficient (Kc) water budgeting → exact mm needed, litres per acre, and a 7-day irrigation plan that skips rain days, with best-time-of-day advice |
 | 🌦️ **7-day + 24-hour forecast** | Live Open-Meteo data (no API key), offline-cached with deterministic fallback — works in airplane mode |
 | ⚠️ **Disaster & flood warnings** | Heavy-rain, flood and storm risk surfaced at the top of the dashboard before the event |
-| 📈 **Mandi market prices** | Crop price, 14-day trend chart and sell/hold advice for the farmer's district |
+| 📈 **Mandi market prices** | Real local-mandi selling price per quintal (paddy/potato/cotton) with **cost of production vs. margin**, a 14-day trend chart and sell/hold advice — "Updated today · source: local market board" |
 | 🤖 **AgriSaathi — AI companion** | Floating assistant that answers from the farm's *live data* — weekly weather summary, pest risk, irrigation timing, sell/hold advice — by **tap chips, typing or 🎤 voice**, in 4 languages with read-aloud. Runs **100% offline on the local rule engine** (no LLM quota to fail); includes a first-visit **coach tour** of the dashboard (replayable from Profile) |
 | 🎬 **Cinematic story with sound** | The 7-scene intro has a synthesized ambient score (Web Audio — drone, pad chords, pentatonic plucks, storm rain/wind; **zero audio files**, works offline) with on/off control; **hold anywhere or press ⏸/Spacebar to pause** and read at your pace |
 | 🗣️ **Voice read-aloud** | Every advisory speaks aloud in **English & हिन्दी** via the device's own speech engine (বাংলা/मराठी queued next) |

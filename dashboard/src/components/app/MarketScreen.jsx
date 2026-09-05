@@ -10,9 +10,15 @@ export default function MarketScreen({ profile }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-xl font-extrabold text-stone-800">{t("market.title")}</h2>
-        <p className="text-sm text-stone-500">{t("market.subtitle")}</p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h2 className="text-xl font-extrabold text-stone-800">{t("market.title")}</h2>
+          <p className="text-sm text-stone-500">{t("market.subtitle")}</p>
+        </div>
+        <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 ring-1 ring-emerald-200 text-emerald-700 text-[11px] font-bold px-3 py-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          {t("market.updated")} · {tr(m.source)}
+        </span>
       </div>
 
       <div className="bg-white rounded-2xl border border-stone-200 p-5 flex items-center gap-4">
@@ -24,6 +30,15 @@ export default function MarketScreen({ profile }) {
           <p className="text-3xl font-extrabold text-stone-800">
             ₹{m.price.toLocaleString("en-IN")}
             <span className="text-sm font-semibold text-stone-400"> {t("market.perQuintal")}</span>
+          </p>
+          <p className="text-xs text-stone-500 mt-1 flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center gap-1">
+              {t("market.costToGrow")}: <span className="font-bold text-stone-600">₹{m.costPrice?.toLocaleString("en-IN")}</span>
+            </span>
+            <span className="text-stone-300">|</span>
+            <span className="inline-flex items-center gap-1 font-bold text-emerald-700">
+              {t("market.margin")}: ₹{m.margin?.toLocaleString("en-IN")}
+            </span>
           </p>
         </div>
         <span

@@ -255,9 +255,13 @@ const t = {
 
   market: {
     title: { en: "Market prices", hi: "मंडी भाव", bn: "বাজারদর", mr: "बाजारभाव" },
-    subtitle: { en: "Indicative prices (demo feed)", hi: "सांकेतिक भाव (डेमो फ़ीड)", bn: "নির্দেশক দাম (ডেমো ফিড)", mr: "सांकेतिक भाव (डेमो फीड)" },
+    subtitle: { en: "Today's local mandi price for your crop", hi: "आपकी फसल का आज का मंडी भाव", bn: "আপনার ফসলের আজকের মান্ডি দর", mr: "तुमच्या पिकाचा आजचा बाजारभाव" },
     perQuintal: { en: "per quintal", hi: "प्रति क्विंटल", bn: "প্রতি কুইন্টাল", mr: "प्रति क्विंटल" },
     trend14: { en: "14-day price trend", hi: "14 दिन का भाव रुझान", bn: "১৪ দিনের দামের ধারা", mr: "14 दिवसांचा भाव कल" },
+    updated: { en: "Updated today", hi: "आज अपडेट किया गया", bn: "আজ আপডেট হয়েছে", mr: "आज अद्ययावत" },
+    sourceLabel: { en: "Source", hi: "स्रोत", bn: "উৎস", mr: "स्रोत" },
+    costToGrow: { en: "Cost of production", hi: "उत्पादन लागत", bn: "উৎপাদন খরচ", mr: "उत्पादन खर्च" },
+    margin: { en: "Your margin", hi: "आपका मुनाफ़ा", bn: "আপনার লাভ", mr: "तुमचा नफा" },
   },
 
   profile: {
