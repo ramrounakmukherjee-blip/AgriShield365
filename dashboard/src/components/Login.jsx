@@ -43,8 +43,8 @@ export default function Login({ onVerified, returningName }) {
       // real auth rejected it — fall through to the demo check below
     }
     // Offline / demo fallback when real Firebase auth is unreachable.
-    // 123456 matches the whitelisted test code; 1357 kept for backwards compat.
-    if (otp === "123456" || otp === "1357") {
+    // The universal demo OTP is 123456 (six digits), same as the test code.
+    if (otp === "123456") {
       onVerified(phone);
       return;
     }
