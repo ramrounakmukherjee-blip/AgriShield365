@@ -212,6 +212,7 @@ const t = {
     diseaseRisk: { en: "Disease & pest watch", hi: "रोग व कीट निगरानी", bn: "রোগ ও পোকা নজরদারি", mr: "रोग व कीड नजर" },
     allClear: { en: "No disease/pest threats in the forecast window. Keep monitoring.", hi: "पूर्वानुमान अवधि में कोई रोग/कीट खतरा नहीं। निगरानी जारी रखें।", bn: "পূর্বাভাসের সময়ে কোনো রোগ/পোকা হুমকি নেই। নজর রাখুন।", mr: "अंदाज काळात रोग/कीड धोका नाही. निरीक्षण सुरू ठेवा." },
     conditions: { en: "Field conditions", hi: "खेत के हालात", bn: "মাঠের অবস্থা", mr: "शेताची स्थिती" },
+    cropHealth: { en: "Crop health", hi: "फसल की सेहत", bn: "ফসলের স্বাস্থ্য", mr: "पिकाचे आरोग्य" },
     temp: { en: "Temperature", hi: "तापमान", bn: "তাপমাত্রা", mr: "तापमान" },
     moisture: { en: "Humidity", hi: "आर्द्रता", bn: "আর্দ্রতা", mr: "आर्द्रता" },
     rainToday: { en: "Rain today", hi: "आज बारिश", bn: "আজ বৃষ্টি", mr: "आज पाऊस" },

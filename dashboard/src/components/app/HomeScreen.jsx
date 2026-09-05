@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Stethoscope,
   Camera,
+  HeartPulse,
   BookOpen,
   FlaskConical,
   MapPin,
@@ -203,6 +204,13 @@ export default function HomeScreen({ profile, weather, advisories }) {
         )}
       </section>
 
+      {/* Crop Health — AI leaf scan + offline symptom checker, grouped */}
+      <section>
+        <h2 className="text-sm font-extrabold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-2">
+          <HeartPulse className="w-4 h-4 text-emerald-600" />
+          {t("home.cropHealth")}
+        </h2>
+        <div className="flex flex-col gap-2.5">
       {/* AI leaf-scan entry (Gemini via backend) */}
       <motion.button
         initial={{ opacity: 0, y: 12 }}
@@ -243,6 +251,8 @@ export default function HomeScreen({ profile, weather, advisories }) {
           {t("diag.entryCta")}
         </span>
       </motion.button>
+        </div>
+      </section>
 
       {/* Metrics */}
       <section>
