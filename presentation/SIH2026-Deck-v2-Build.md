@@ -28,32 +28,50 @@ video with a static pictorial hero** (problem → solution in one big visual); t
 all the diagrams that the live talk narrates. Include QR + YouTube link on slide 1 too, so a
 judge can still watch the full 8-min walkthrough at their desk.
 
-**Shared slide list (live pitch):**
-1. **Hero** — video (75%) + services flowchart (25%) + QR/links
-2. Proposed Solution (problem → innovation)
-3. Technical Approach (pipeline + tech stack + screenshots + QR)
-4. Feasibility & Viability (feasibility / challenges / strategies **+ business model**)
-5. Impact & Benefits (impact wheel, risk→solution, data chart)
-6. Future Plans — **KhetiScan reveal + roadmap** *(live pitch only — the "masterstroke")*
-7. Research & References (+ full report link)
+**The official deck is FIXED at 6 slides. We never add a 7th.** Slide 1 (Title) is a
+form-fill page and cannot hold content. The video/future material is folded INTO the
+mandated slides as below.
 
-**Official PDF** folds slide-6 future material into slides 4/5/7 to stay within 6.
+**Slide map (both versions):**
+1. **Title page** — fixed SIH form-fill (PS ID, title, theme, Software, Team ID, RAVEN ROOTS);
+   raven logo in the oval. NO content/video here.
+2. **Proposed Solution** — LIVE PPTX: 75% embedded 1:30 walkthrough video + 25% services
+   flowchart + QR/links. PDF: static pictorial problem→solution→services (video replaced by
+   the "loss→protection" hero diagram; QR + YouTube link still present).
+3. **Technical Approach** — farmer journey cycle + two-brain architecture + tech-stack cards
+   + screenshots + QR.
+4. **Feasibility & Viability** — feasibility / viability / challenges→strategies **+ business
+   model tree**.
+5. **Impact & Benefits** — impact wheel + crisis-vs-AgriShield chart + Social/Economic/
+   Environmental chevrons **+ a compact "Future: KhetiScan" teaser band** (the hook — short,
+   pictorial; full detail lives in the report).
+6. **Research & References** — squeezed hexagon source chain + QR/links **+ a one-line
+   "What's next" footer** pointing at KhetiScan/roadmap and the detailed report.
+
+> The **full KhetiScan explanation, the 8-min video, and the deep report** are linked (QR /
+> YouTube / Google Docs) so judges can go deep without us exceeding the 6-slide limit.
 
 ---
 
 # PART B — SLIDE BY SLIDE
 
-## SLIDE 1 — HERO (live: video + services · PDF: pictorial)
+## SLIDE 2 — PROPOSED SOLUTION (live: video hero · PDF: pictorial)
 
-### Layout (live PPTX)
+### Live PPTX layout
 - **Left 75%:** embedded **1:30 walkthrough video** (cinematic story → OTP → map onboarding
   → pest alerts with "Why?" → JalRakshak litres → AgriSaathi sprout chat → Market real
-  prices → Crop Health). Autoplay on click, loop off.
-- **Right 25%:** services flowchart (Napkin/Mermaid below), QR code, and a panel of 3 links:
+  prices → Crop Health). Autoplay on click. The video itself walks the problem → solution →
+  services so judges don't read.
+- **Right 25%:** services flowchart (Diagram 1 below), QR code, and a panel of 3 links:
   - 🌐 **Live app:** agrishield365.web.app
   - 📺 **Full 8-min walkthrough (unlisted YouTube):** `[PASTE LINK — to be recorded]`
   - 💻 **Code / detailed report:** GitHub repo link + Google Docs report link
 - Footer line: *SIH26131 · Early detection & management of crop diseases & pest infestations*
+
+### PDF variant (no video)
+Replace the video with the static **"From loss to protection" hero diagram (Diagram 2)**, big,
+so problem→solution→services land in one glance; keep the services flowchart + Risk ⇄ Solution
+strip (Diagram 3) + QR/YouTube link so a judge can still watch the full video.
 
 ### 📊 DIAGRAM 1 — "AgriShield 365 services" (right 25% column)
 
@@ -104,13 +122,14 @@ big, so the problem→solution lands in one glance without video.
 
 ---
 
-## SLIDE 2 — PROPOSED SOLUTION
+### Slide 2 supporting content — problem → solution → services
 
 **IDEA TITLE:** AgriShield 365 — *Every Farmer, Every Season, Protected.*
 
-Layout: three columns (Lanezy/Lanezy-style left problem boxes, centre story image, right
-solution), plus a **Risk ⇄ Solution** matching row (Lanezy's red-vs-green strip is a winner
-pattern) along the bottom.
+In the **live PPTX** this is exactly what the 1:30 video narrates; keep only the services
+flowchart (Diagram 1) + QR beside the video. In the **PDF**, lay it out as three columns
+(Lanezy-style left problem boxes, centre story image, right solution), plus the **Risk ⇄
+Solution** matching row (Lanezy's red-vs-green strip) along the bottom:
 
 **Left column boxes:**
 - **Real-world issue:** pests/disease seen too late; storms arrive unwarned; advice is not in
@@ -362,35 +381,69 @@ cuts chemicals; timed irrigation saves water).
 
 **Beneficiary strip (small):** smallholder farmers · KVK extension workers · state agri dept.
 
-**Speaker notes (~60 sec):** existing v1 script (three beneficiary groups; social/economic/enviro).
+### 📊 DIAGRAM 12 — "Future: KhetiScan" teaser band (bottom strip of slide 5 — short hook only)
+
+A **one-row horizontal teaser** (do NOT explain the module on the slide — full detail is in the
+report + 8-min video). Keep it ~15% of the slide height, gold/emerald so it reads as "what's next".
+
+**Napkin AI prompt:**
+> A slim horizontal "future vision" banner. Left: a small satellite icon over farm fields with a
+> gold star badge "Breakthrough". Middle text (short): "KhetiScan — geospatial canopy
+> surveillance: satellite NDVI/NDWI (Sentinel-2/Landsat) spots pest-attacked & waterlogged
+> zones across whole districts before field visits." Right: 4 tiny chips with icons: "Organic
+> farming", "100+ rare paddy seeds", "Multi-crop fertility", "Farmer community". Emerald and
+> gold, flat, compact.
+
+**Mermaid code (compact):**
+```mermaid
+flowchart LR
+    K["🛰️ KhetiScan<br/>satellite NDVI/NDWI<br/>pest & flood zones from space"] --> F1["🌿 Organic"]
+    K --> F2["🌾 100+ rare seeds"]
+    K --> F3["🔁 Multi-crop fertility"]
+    K --> F4["👨‍🌾 Community"]
+    classDef star fill:#fde68a,color:#92400e,stroke:#f59e0b;
+    classDef f fill:#ecfdf5,color:#065f46,stroke:#34d399;
+    class K star; class F1,F2,F3,F4 f;
+```
+
+**Teaser line on slide (one sentence):** *"And beyond the phone: KhetiScan will watch entire
+districts from open satellite data — catching pest and flood zones from space."*
+
+**Speaker notes (~60 sec):**
+> "The impact reaches three groups: farmers protect up to forty percent of yield and thirty
+> percent of their water; extension workers carry one verified card to hundreds; government gets
+> a near-zero-cost advisory channel. Social, economic, environmental — language and voice make
+> it inclusive, protected yield and lower input costs make it profitable, threshold-based
+> spraying and timed irrigation make it sustainable. And this is just one phone — the gold band
+> at the bottom is our leap forward: KhetiScan, watching whole districts from open satellite
+> data. I won't unpack it here — there's a full module in our report and video — but it turns
+> one farmer's alert into a regional early-warning map."
 
 ---
 
-## SLIDE 6 — FUTURE PLANS (live pitch "masterstroke"; folded into PDF as roadmap lines)
+## FUTURE PLANS — REPORT & VIDEO ONLY (not a 7th slide)
 
-Lead with the reveal. Title: **"What's next — and our breakthrough module."**
+KhetiScan gets only the **teaser band on Slide 5** + a footer line on Slide 6. The full
+breakdown below goes in the **Google Docs detailed report** and the **8-min YouTube video**
+(linked via QR), where there is no slide limit. Keep Diagrams 10 & 11 for the report.
 
-### ⭐ KhetiScan — Geospatial Canopy Surveillance (the hero)
-Present it as the module that turns a phone app into a regional early-warning system.
-- **Technology:** connects to **Copernicus Sentinel-2 / Landsat open satellite data**
-  (via PostGIS / Rasterio) — free, government-grade.
-- **Detection:** computes **NDVI** = (NIR−Red)/(NIR+Red) and **NDWI** (vegetation & water
-  indices) for every field.
-- **Anomaly detection:** flags sudden multi-temporal drops across field sectors — pinpointing
+### ⭐ KhetiScan — Geospatial Canopy Surveillance (report detail)
+The module that turns a phone app into a regional early-warning system:
+- **Technology:** **Copernicus Sentinel-2 / Landsat open satellite data** via PostGIS / Rasterio.
+- **Detection:** **NDVI** = (NIR−Red)/(NIR+Red) and **NDWI** (vegetation & water indices) per field.
+- **Anomaly detection:** flags sudden multi-temporal index drops across sectors — pinpointing
   **waterlogged or pest-attacked zones before any field visit**, then pushes alerts.
-- **Why it's a leap:** today AgriShield warns one farm from weather; KhetiScan watches **whole
+- **Why it's a leap:** AgriShield warns one farm from weather; KhetiScan watches **whole
   districts from space** and routes teams to the exact infected sector.
 
-### 📊 DIAGRAM 10 — KhetiScan roadmap (Lanezy winding-road timeline)
+### 📊 DIAGRAM 10 — roadmap winding-road (use in report / optional tiny on slide-6 footer)
 
 **Napkin AI prompt:**
-> A winding road/journey timeline with numbered milestone dots, left to right, titled "From
-> one phone to every field". Milestones: 01 "Pilot — paddy, potato, cotton (WB & Vidarbha)";
-> 02 "All districts — rules-file expansion"; 03 "Real SMS + push alerts (Blaze)"; 04 "Live
-> Agmarknet mandi feed"; 05 "KhetiScan satellite NDVI/NDWI — pest & flood zones from space";
-> 06 "Organic farming push + 100+ rare paddy seed protection"; 07 "Multi-crop land fertility
-> advisor"; 08 "Farmer community + all 22 languages + KVK dashboards". Make milestone 05 bigger
-> and gold to mark the breakthrough. Green road, navy labels.
+> A winding road timeline, numbered milestones 01–08, titled "From one phone to every field":
+> 01 Pilot paddy/potato/cotton; 02 all districts via rules file; 03 real SMS+push; 04 live
+> Agmarknet feed; 05 (bigger, gold) KhetiScan satellite NDVI/NDWI; 06 organic farming + 100+
+> rare paddy seeds; 07 multi-crop fertility advisor; 08 farmer community + 22 languages + KVK
+> dashboards. Green road, gold breakthrough milestone.
 
 **Mermaid code:**
 ```mermaid
@@ -404,9 +457,7 @@ flowchart LR
     class M5 star; class M1,M2,M3,M4,M6,M7,M8 std;
 ```
 
-### 📊 DIAGRAM 11 — KhetiScan science flow (small, to show it's real)
-
-**Mermaid code:**
+### 📊 DIAGRAM 11 — KhetiScan science flow (report)
 ```mermaid
 flowchart LR
     S1["🛰️ Sentinel-2 / Landsat<br/>(open satellite data)"] --> S2["PostGIS / Rasterio<br/>compute NDVI · NDWI"]
@@ -415,43 +466,34 @@ flowchart LR
     S4 --> S5["📲 Alerts to farmers,<br/>KVK & agri dept"]
 ```
 
-**Other future pillars (short cards):**
-- 🌿 **Promote organic / natural farming** guidance
-- 🌾 **Protect 100+ rare paddy seed varieties** (heritage-seed library & advisory)
-- 🔁 **Multi-cropping & soil fertility advisor** — suggest crops that improve land health
-- 👨‍🌾 **Farmer community** — share advisories, outbreak reports, and mandi tips (KhetiScan feeds
-  the community map)
-
-**Speaker notes (~60 sec):**
-> "What you've seen is built and live. If you take us forward, here's our breakthrough:
-> KhetiScan. Today we warn one farm from its weather; KhetiScan watches entire districts from
-> space — Sentinel and Landsat open satellite data, processed into vegetation and water indices,
-> flag pest-attacked or waterlogged sectors before anyone visits the field. Around it we grow
-> organic-farming guidance, a library protecting over a hundred rare paddy seeds, a multi-crop
-> soil-health advisor, and a farmer community. This is where one phone becomes a regional
-> safety net."
+**Other future pillars (report cards):** 🌿 organic/natural farming guidance · 🌾 protect 100+
+rare paddy seed varieties · 🔁 multi-cropping & soil-fertility advisor · 👨‍🌾 farmer community
+(fed by the KhetiScan map).
 
 ---
 
-## SLIDE 7 — RESEARCH & REFERENCES
+## SLIDE 6 — RESEARCH & REFERENCES
 
-Lanezy style: a **hexagon chain across the top**, each hexagon a source with a LINK, and
-screenshots / report panel along the bottom.
+Keep this **tight and squeezed** — a compact hexagon chain across the top (small hexes, source
+name only; full URLs live in the report), and a link/QR panel along the bottom.
 
-Hexagons (left → right): **ICAR – CICR Nagpur** (pest loss ~40%, cotton IPM) → **TNAU Agritech
-Portal** (disease/pest trigger conditions) → **FAO-56 Paper 56** (crop Kc coefficients) → **IMD
-Agromet** (3–5 day lead time) → **Agmarknet** (mandi prices) → **Open-Meteo** (weather API) →
-**Copernicus Sentinel-2 / Landsat** (KhetiScan roadmap).
+Hexagons (left → right, small): **ICAR – CICR Nagpur** → **TNAU Agritech Portal** → **FAO-56
+Paper 56** → **IMD Agromet** → **Agmarknet** → **Open-Meteo** → **Copernicus Sentinel-2/Landsat**
+(the last one doubles as the future-data source).
 
-**Bottom panel — "Try it yourself":** app QR + web app link · API health link · GitHub repo ·
-**unlisted YouTube walkthrough** · **full Google-Docs detailed report** link.
+**Bottom link panel — "Try it & read more":** app **QR** + agrishield365.web.app · GitHub repo ·
+**unlisted YouTube walkthrough** · **full Google-Docs report** (contains the complete KhetiScan
+module, business model, and roadmap).
+
+**"What's next" footer (one line, bottom edge):**
+> 🛰️ **Next: KhetiScan** — district-wide pest & flood detection from open satellite data ·
+> organic farming · 100+ rare paddy seeds · full roadmap in the report.
 
 **Speaker notes (~25 sec):**
-> "Every threshold and number traces to a verifiable institution — ICAR, TNAU, the FAO
-> irrigation standard, the meteorological department, and for our roadmap the EU's open
-> Sentinel satellites. And unlike a concept, it is all live right now. A full written report and
-> an eight-minute video walkthrough are linked here. Thank you — RAVEN ROOTS, ready for your
-> questions."
+> "Every threshold traces to a verifiable institution — ICAR, TNAU, FAO, the meteorological
+> department — and our future KhetiScan module uses the EU's open Sentinel satellites. It is all
+> live now, and the QR opens it on your phone; a full written report and eight-minute video are
+> linked. Thank you — RAVEN ROOTS, ready for your questions."
 
 ---
 
@@ -461,17 +503,22 @@ Agromet** (3–5 day lead time) → **Agmarknet** (mandi prices) → **Open-Mete
 - [ ] **1:30 golden-path walkthrough video** (embed in live PPTX slide 1)
 - [ ] **~8 min unlisted YouTube** full walkthrough (you narrating part-by-part) → paste link on
       slides 1 & 7
-- [ ] **Google Docs detailed report** (everything the deck couldn't fit) → paste link on slide 7
+- [ ] **Google Docs detailed report** (everything the deck couldn't fit) → paste link on slide 6
       *(I will draft this report for you next — just say the word)*
 - [ ] **QR code PNG** for https://agrishield365.web.app (free QR generator)
 - [ ] Screenshots (Incognito, mobile width): story, OTP, map, alerts+Why?, JalRakshak litres,
       forecast chart, AgriSaathi chat, Crop Health, Market real prices
 - [ ] RAVEN ROOTS raven logo in every top-left oval
 
-**Diagram build order (Napkin/Mermaid):** D1 services · D2 PDF hero · D3 risk⇄solution ·
-D4 journey · D5 two-brain architecture (most important) · D6 tech stack · D7 revenue tree ·
-D8 impact wheel · D9 comparison bars · D10 roadmap · D11 KhetiScan flow.
+**Diagram build order (Napkin/Mermaid):** D1 services (slide 2) · D2 PDF hero (slide 2 PDF) ·
+D3 risk⇄solution (slide 2 PDF) · D4 journey (slide 3) · D5 two-brain architecture (slide 3,
+most important) · D6 tech stack (slide 3) · D7 revenue tree (slide 4) · D8 impact wheel
+(slide 5) · D9 comparison bars (slide 5) · D12 KhetiScan teaser band (slide 5) · D10 roadmap +
+D11 KhetiScan flow (report/video only).
 
-**Slide-count rule:** live deck = 7 slides (video hero + future reveal); official PDF = 6
-sections (fold slide-6 KhetiScan/roadmap into slides 4/5/7 as future-scope bullets so the
-uploaded file still obeys the SIH template).
+**Slide-count rule — the deck is always exactly 6 slides (the fixed SIH template):**
+1 Title (form-fill) · 2 Proposed Solution (live=video 75%+services 25% / PDF=pictorial) ·
+3 Technical Approach · 4 Feasibility & Viability + business model · 5 Impact & Benefits +
+KhetiScan teaser band · 6 Research & References (squeezed) + "what's next" footer.
+**KhetiScan full detail, roadmap, and deep-dives live only in the Google Docs report + the
+8-min YouTube video**, linked by QR — never as a 7th slide.
