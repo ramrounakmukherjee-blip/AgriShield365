@@ -80,3 +80,22 @@ template; this note records the visual/content patterns winners use WITHIN it.
 - Speaker notes carry the sentences; slides stay visual.
 - Palette: SIH navy heading + our emerald/green brand accents; keep the blue
   footer bar from the official template.
+
+---
+
+## Addendum — Lanezy (404 The Optimistics, SIH 2025 winner) patterns to copy
+1. **References slide = hexagon chain across the top**, each hex a source name + "LINK",
+   with a screenshots/UI band pinned along the bottom.
+2. **Solution slide = hazard pyramid** (Core Innovation at top → Primary Functions →
+   Safety/Compliance → Monitoring/Support bands) + left grey text boxes
+   (Real-world issue / Why important / Solution) + right red-risk ⇄ green-solution arrows.
+3. **Impact slide = dashed impact wheel** (centre "IMPACTS|BENEFITS", numbered nodes) +
+   a **current-vs-with-system comparison bar chart** (grey vs green) + numbered benefit cards.
+4. **Feasibility slide = 3 pinned cork-board panels** (Feasibility Analysis / Viability /
+   Business Potential), each with icon + underlined sub-heading + line; add a thematic
+   photo band at the bottom (their road/bus; ours: farm field).
+5. **Technical slide = coloured circular process + cartoon architecture panels + tech pills**
+   grouped FrontEnd/BackEnd/Deployment/Hardware with framework logos.
+6. **Business-model tree**: top node → pillars (B2C freemium / fintech / B2B agribusiness /
+   B2G & PMFBY insurance) — reused for our monetization.
+7. Live pitch deck opens with an **embedded product video** instead of bullet slides.
