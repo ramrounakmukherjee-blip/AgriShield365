@@ -288,7 +288,7 @@ down, product is a one-time asset) → 🟢 Environmental (less pesticide, less 
 
 **Beneficiary strip:** smallholder farmers · FPOs/cooperatives · KVK & agri department.
 
-### 📊 DIAGRAM H6 — "Coming next" gold teaser band (replaces KhetiScan; hardware roadmap)
+### 📊 DIAGRAM H6 — "Coming next" gold teaser band (hardware roadmap only)
 
 Short hook only — full detail in the report/video. Two future capabilities.
 
@@ -357,5 +357,5 @@ Compact hexagon source chain (small hexes, source names):
 - [ ] Google-Docs hardware report (BOM, soul.py/identity.py/main.py detail, MCP setup, nutrient &
       heatwave roadmap) — linked on slide 6 *(can draft on request)*
 
-**Always exactly 6 slides.** KhetiScan is NOT mentioned in the hardware deck (software-only
-secret). Future capabilities shown = **nutrient deficiency + heat waves** only.
+**Always exactly 6 slides.** Do not mention the software-only satellite module in the hardware deck.
+Future capabilities shown = **nutrient deficiency + heat waves** only.
