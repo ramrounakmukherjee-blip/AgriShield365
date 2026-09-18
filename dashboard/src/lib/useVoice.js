@@ -1,10 +1,14 @@
 // Free in-browser speech synthesis for read-aloud in the farmer's language.
-const VOICE_LANG = { en: "en-IN", hi: "hi-IN", bn: "bn-IN", mr: "mr-IN" };
+// Uses the device/browser's best available neural/native voice. No API key,
+// no server call, and no audio files are required.
+const VOICE_CONFIG = {
+  en: { locales: ["en-IN", "en-GB", "en-US", "en"], rate: 0.94, pitch: 1.02 },
+  hi: { locales: ["hi-IN", "hi"], rate: 0.88, pitch: 1.0 },
+  bn: { locales: ["bn-IN", "bn-BD", "bn"], rate: 0.86, pitch: 1.0 },
+  mr: { locales: ["mr-IN", "mr"], rate: 0.88, pitch: 1.0 },
+};
 
-// Voice read-aloud is shipped for English & Hindi only. Bengali & Marathi TTS
-// voices in most browsers sound unnatural, so those are shown as
-// "under production" in the UI (future scope) rather than played badly.
-export const VOICE_ENABLED_LANGS = ["en", "hi"];
+export const VOICE_ENABLED_LANGS = Object.keys(VOICE_CONFIG);
 
 export function isVoiceEnabled(lang) {
   return VOICE_ENABLED_LANGS.includes(lang);
@@ -32,6 +36,7 @@ export function warmVoices() {
   window.speechSynthesis.onvoiceschanged = load;
   // Some browsers need a nudge
   setTimeout(load, 250);
+  setTimeout(load, 900);
 }
 
 export function getVoices() {
@@ -42,17 +47,57 @@ export function getVoices() {
   return cachedVoices;
 }
 
-function pickVoice(targetLang, baseLang) {
+function normalizedLang(lang = "") {
+  return lang.toLowerCase().replace("_", "-");
+}
+
+function voiceScore(voice, lang) {
+  const cfg = VOICE_CONFIG[lang] || VOICE_CONFIG.en;
+  const voiceLang = normalizedLang(voice.lang);
+  const locales = cfg.locales.map(normalizedLang);
+  const base = normalizedLang(lang);
+
+  let score = -1000;
+  if (locales.includes(voiceLang)) score = 120;
+  else if (voiceLang.startsWith(`${base}-`) || voiceLang === base) score = 95;
+  else if (lang === "en" && voiceLang.startsWith("en-")) score = 70;
+
+  if (score < 0) return score;
+
+  const name = `${voice.name || ""} ${voice.voiceURI || ""}`.toLowerCase();
+
+  // Browser/cloud voices with these names are usually more natural than OS
+  // fallback voices. This improves Hindi, Bengali and Marathi when available.
+  if (/natural|neural|online|google|microsoft|heera|kalpana|lekha|hemant|ravi|swara/i.test(name)) score += 30;
+  if (/female|zira|aria|sonia|neerja|madhur|ananya/i.test(name)) score += 8;
+
+  // Avoid the voices that typically sound like old desktop robots.
+  if (/compact|espeak|festival|flite|klatt|novelty|whisper|dummy/i.test(name)) score -= 60;
+
+  // Exact Indian-region matches are preferred for farmer advisories.
+  if (voiceLang.endsWith("-in")) score += 10;
+
+  return score;
+}
+
+export function getBestVoice(lang) {
   const voices = getVoices();
-  if (!voices.length) return null;
-  return (
-    voices.find((v) => v.lang && v.lang.toLowerCase() === targetLang.toLowerCase()) ||
-    voices.find((v) => v.lang && v.lang.toLowerCase().startsWith(baseLang + "-")) ||
-    voices.find((v) => v.lang && v.lang.toLowerCase().startsWith(baseLang)) ||
-    // Prefer a local-service Indian voice as a last resort
-    voices.find((v) => /hi|en[-_]in/i.test(v.lang)) ||
-    null
-  );
+  if (!voices.length || !isVoiceEnabled(lang)) return null;
+  const ranked = voices
+    .map((voice) => ({ voice, score: voiceScore(voice, lang) }))
+    .filter((v) => v.score > 0)
+    .sort((a, b) => b.score - a.score);
+  return ranked[0]?.voice || null;
+}
+
+export function hasVoiceForLang(lang) {
+  if (!isSpeechSupported() || !isVoiceEnabled(lang)) return false;
+  const voices = getVoices();
+  // Voice list may still be loading. Allow the button briefly instead of hiding
+  // it forever on first paint.
+  if (!voices.length) return true;
+  if (lang === "en") return true;
+  return Boolean(getBestVoice(lang));
 }
 
 export function stopSpeaking() {
@@ -64,24 +109,46 @@ export function stopSpeaking() {
   }
 }
 
-export function speak(text, lang) {
-  if (!isSpeechSupported() || !text) return false;
-  if (!isVoiceEnabled(lang)) return false;
+function cleanForSpeech(text) {
+  return String(text || "")
+    .replace(/[•·]/g, ".")
+    .replace(/[\u{1F300}-\u{1FAFF}]/gu, "")
+    .replace(/[\u2600-\u27BF]/g, "")
+    .replace(/\uFE0F/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function speak(text, lang, onDone) {
+  if (!isSpeechSupported() || !text || !isVoiceEnabled(lang)) return false;
   warmVoices();
-  window.speechSynthesis.cancel();
 
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = VOICE_LANG[lang] || "en-IN";
-  utter.rate = lang === "hi" ? 0.92 : 0.98;
-  utter.pitch = 1;
+  const cfg = VOICE_CONFIG[lang] || VOICE_CONFIG.en;
+  const voice = getBestVoice(lang);
+
+  // For vernacular languages, do not fall back to an English/default voice —
+  // that is exactly what makes Bengali/Marathi sound broken and robotic.
+  if (lang !== "en" && !voice && getVoices().length) return false;
+
+  stopSpeaking();
+
+  const utter = new SpeechSynthesisUtterance(cleanForSpeech(text));
+  utter.lang = cfg.locales[0];
+  utter.rate = cfg.rate;
+  utter.pitch = cfg.pitch;
   utter.volume = 1;
+  if (voice) {
+    utter.voice = voice;
+    utter.lang = voice.lang || utter.lang;
+  }
+  if (onDone) {
+    utter.onend = onDone;
+    utter.onerror = onDone;
+  }
 
-  const voice = pickVoice(utter.lang, lang);
-  if (voice) utter.voice = voice;
+  window.speechSynthesis.speak(utter);
 
   // Chrome pauses long utterances (~15s) — nudge it to keep talking.
-  stopSpeaking();
-  window.speechSynthesis.speak(utter);
   window.__agriVoiceTimer = setInterval(() => {
     if (window.speechSynthesis.speaking && window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
