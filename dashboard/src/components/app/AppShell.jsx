@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Home, CalendarDays, Droplets, TrendingUp, User, LogOut } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import LanguageSwitcher from "../LanguageSwitcher";
+import ThemeSwitcher from "../ThemeSwitcher";
 import { getForecast, getAdvisories, recordAdvisoryHistory, cloudSyncAdvisory } from "../../lib/api";
 import { getSeason } from "../../lib/agri";
 import Loading from "./Loading";
@@ -78,7 +79,10 @@ export default function AppShell({ profile, onSignOut, onProfileChange, onResetS
                 )}
               </p>
             </div>
-            <LanguageSwitcher />
+            <div className="flex items-center gap-2">
+              <ThemeSwitcher />
+              <LanguageSwitcher />
+            </div>
             <button
               onClick={onSignOut}
               aria-label={t("app.signOut")}
