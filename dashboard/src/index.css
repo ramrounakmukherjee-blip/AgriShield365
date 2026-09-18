@@ -409,3 +409,66 @@ html[data-theme="dark"] .leaflet-control-attribution {
   background: rgba(16, 33, 24, 0.82) !important;
   color: #b7d7c9 !important;
 }
+
+/* Dark-mode semantic alert/card contrast fixes.
+   These keep disease alerts, symptom cards, JalRakshak and market badges readable
+   when generic Tailwind red/green/sky/amber utility colors sit on dark surfaces. */
+html[data-theme="dark"] .bg-red-50 { background-color: #451a1a !important; }
+html[data-theme="dark"] .bg-red-100 { background-color: #5f1b1b !important; }
+html[data-theme="dark"] .border-red-200 { border-color: rgba(248, 113, 113, 0.34) !important; }
+html[data-theme="dark"] .border-red-300 { border-color: rgba(248, 113, 113, 0.55) !important; }
+html[data-theme="dark"] .text-red-900,
+html[data-theme="dark"] .text-red-800,
+html[data-theme="dark"] .text-red-700,
+html[data-theme="dark"] .text-red-600 { color: #fecaca !important; }
+
+html[data-theme="dark"] .bg-amber-50 { background-color: #3f2b12 !important; }
+html[data-theme="dark"] .bg-amber-100 { background-color: #573a12 !important; }
+html[data-theme="dark"] .border-amber-200 { border-color: rgba(251, 191, 36, 0.36) !important; }
+html[data-theme="dark"] .border-amber-300 { border-color: rgba(251, 191, 36, 0.58) !important; }
+html[data-theme="dark"] .text-amber-900,
+html[data-theme="dark"] .text-amber-800,
+html[data-theme="dark"] .text-amber-700,
+html[data-theme="dark"] .text-amber-600 { color: #fde68a !important; }
+
+html[data-theme="dark"] .bg-sky-50 { background-color: #082f49 !important; }
+html[data-theme="dark"] .bg-sky-100 { background-color: #0c4a6e !important; }
+html[data-theme="dark"] .border-sky-200 { border-color: rgba(56, 189, 248, 0.34) !important; }
+html[data-theme="dark"] .border-sky-300 { border-color: rgba(56, 189, 248, 0.56) !important; }
+html[data-theme="dark"] .text-sky-900,
+html[data-theme="dark"] .text-sky-800,
+html[data-theme="dark"] .text-sky-700,
+html[data-theme="dark"] .text-sky-600 { color: #bae6fd !important; }
+
+html[data-theme="dark"] .bg-green-50 { background-color: #12351f !important; }
+html[data-theme="dark"] .bg-green-100 { background-color: #16452a !important; }
+html[data-theme="dark"] .text-green-900,
+html[data-theme="dark"] .text-green-800,
+html[data-theme="dark"] .text-green-700,
+html[data-theme="dark"] .text-green-600 { color: #bbf7d0 !important; }
+
+html[data-theme="dark"] .bg-blue-100 { background-color: #1e3a8a !important; }
+html[data-theme="dark"] .text-blue-700,
+html[data-theme="dark"] .text-blue-600 { color: #bfdbfe !important; }
+
+html[data-theme="dark"] .bg-cyan-100 { background-color: #164e63 !important; }
+html[data-theme="dark"] .text-cyan-700,
+html[data-theme="dark"] .text-cyan-600 { color: #a5f3fc !important; }
+
+html[data-theme="dark"] .bg-orange-100 { background-color: #7c2d12 !important; }
+html[data-theme="dark"] .text-orange-700,
+html[data-theme="dark"] .text-orange-600 { color: #fed7aa !important; }
+
+html[data-theme="dark"] .bg-teal-100 { background-color: #134e4a !important; }
+html[data-theme="dark"] .text-teal-700,
+html[data-theme="dark"] .text-teal-600 { color: #99f6e4 !important; }
+
+html[data-theme="dark"] .from-emerald-50 {
+  --tw-gradient-from: #12351f var(--tw-gradient-from-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position)) !important;
+}
+html[data-theme="dark"] .to-green-50 { --tw-gradient-to: #102a1a var(--tw-gradient-to-position) !important; }
+html[data-theme="dark"] .text-emerald-700\/80 { color: #a7f3d0 !important; }
+
+html[data-theme="dark"] .bg-black\/5 { background-color: rgba(255, 255, 255, 0.08) !important; }
+html[data-theme="dark"] .bg-black\/10 { background-color: rgba(255, 255, 255, 0.14) !important; }
