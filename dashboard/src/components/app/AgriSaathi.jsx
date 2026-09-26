@@ -15,6 +15,54 @@ import {
 } from "../../lib/saathi";
 
 const TOUR_KEY = "agrishield365_tour_done_v1";
+const FEEDBACK_KEY = "agrishield365_saathi_feedback";
+
+const FEEDBACK_TEXT = {
+  title: {
+    en: "Close AgriSaathi?",
+    hi: "AgriSaathi बंद करें?",
+    bn: "AgriSaathi বন্ধ করবেন?",
+    mr: "AgriSaathi बंद करायचे?",
+  },
+  body: {
+    en: "Before you exit, tell us how helpful this answer felt. Your feedback helps AgriSaathi improve for farmers.",
+    hi: "बंद करने से पहले बताइए जवाब कितना उपयोगी लगा। आपका फीडबैक AgriSaathi को किसानों के लिए बेहतर बनाता है।",
+    bn: "বন্ধ করার আগে বলুন উত্তরটি কতটা সাহায্য করেছে। আপনার মতামত AgriSaathi-কে কৃষকদের জন্য আরও ভালো করে।",
+    mr: "बंद करण्यापूर्वी उत्तर किती उपयोगी वाटले ते सांगा. तुमचा अभिप्राय AgriSaathi शेतकऱ्यांसाठी अधिक चांगला करतो.",
+  },
+  prompt: {
+    en: "Was I helpful?",
+    hi: "क्या मैं मददगार था?",
+    bn: "আমি কি সাহায্য করতে পেরেছি?",
+    mr: "मी उपयोगी ठरलो का?",
+  },
+  saved: {
+    en: "Thanks — feedback saved locally.",
+    hi: "धन्यवाद — फीडबैक इस डिवाइस पर सेव हो गया।",
+    bn: "ধন্যবাদ — মতামত এই ডিভাইসে সংরক্ষিত হয়েছে।",
+    mr: "धन्यवाद — अभिप्राय या डिव्हाइसवर सेव्ह झाला.",
+  },
+  confirm: { en: "Confirm", hi: "पक्का करें", bn: "নিশ্চিত করুন", mr: "निश्चित करा" },
+  cancel: { en: "Cancel", hi: "रद्द करें", bn: "বাতিল", mr: "रद्द करा" },
+};
+
+const FEEDBACK_RATINGS = [
+  { score: 5, emoji: "😊", label: "great" },
+  { score: 4, emoji: "🙂", label: "good" },
+  { score: 3, emoji: "😐", label: "okay" },
+  { score: 2, emoji: "☹️", label: "poor" },
+  { score: 1, emoji: "😔", label: "bad" },
+];
+
+function saveSaathiFeedback(entry) {
+  try {
+    const old = JSON.parse(localStorage.getItem(FEEDBACK_KEY) || "[]");
+    const next = [entry, ...old].slice(0, 50);
+    localStorage.setItem(FEEDBACK_KEY, JSON.stringify(next));
+  } catch {
+    /* ignore */
+  }
+}
 
 function hasSeenTour() {
   try {
@@ -158,6 +206,9 @@ export default function AgriSaathi({ profile, weather, advisories }) {
   const [listening, setListening] = useState(false);
   const [input, setInput] = useState("");
   const [tourStep, setTourStep] = useState(hasSeenTour() ? -1 : 0);
+  const [exitPrompt, setExitPrompt] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [feedbackSaved, setFeedbackSaved] = useState(false);
   const recRef = useRef(null);
   const scrollRef = useRef(null);
   const ready = weather && advisories;
@@ -187,6 +238,45 @@ export default function AgriSaathi({ profile, weather, advisories }) {
   function openPanel() {
     setOpen(true);
     if (!msgs.length) greet();
+  }
+
+  function feedbackPayload(rating = selectedRating) {
+    const lastUser = [...msgs].reverse().find((m) => m.role === "user")?.text || "";
+    const lastSaathi = [...msgs].reverse().find((m) => m.role === "saathi")?.text || "";
+    return {
+      rating,
+      label: FEEDBACK_RATINGS.find((r) => r.score === rating)?.label || "not-rated",
+      lang,
+      crop: advisories?.crop?.id || profile?.crop || "",
+      alertCount: advisories?.alerts?.length || 0,
+      messageCount: msgs.length,
+      lastUser: lastUser.slice(0, 220),
+      lastSaathi: lastSaathi.slice(0, 320),
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  function submitFeedback(rating = selectedRating, closeAfter = false) {
+    saveSaathiFeedback(feedbackPayload(rating));
+    setSelectedRating(rating);
+    setFeedbackSaved(true);
+    if (closeAfter) {
+      setTimeout(() => closePanel(), 420);
+    }
+  }
+
+  function requestClose() {
+    setExitPrompt(true);
+    setFeedbackSaved(false);
+  }
+
+  function closePanel() {
+    recRef.current?.abort?.();
+    setListening(false);
+    setOpen(false);
+    setExitPrompt(false);
+    setSelectedRating(null);
+    setFeedbackSaved(false);
   }
 
   function ask(topic, userText) {
@@ -300,7 +390,7 @@ export default function AgriSaathi({ profile, weather, advisories }) {
                 <p className="text-[11px] text-emerald-100 leading-tight">{L.subtitle}</p>
               </div>
               <button
-                onClick={() => setOpen(false)}
+                onClick={requestClose}
                 aria-label={L.close}
                 className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 grid place-items-center transition"
               >
@@ -399,6 +489,75 @@ export default function AgriSaathi({ profile, weather, advisories }) {
             <div className="shrink-0 bg-emerald-50 px-3 py-1.5 text-center text-[10px] font-semibold text-emerald-700 flex items-center justify-center gap-1">
               <Compass className="w-3 h-3" /> Runs offline · agronomy rules from ICAR / TNAU / FAO-56
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Exit feedback prompt */}
+      <AnimatePresence>
+        {exitPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setExitPrompt(false)}
+          >
+            <motion.div
+              initial={{ y: 28, scale: 0.96, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 28, scale: 0.96, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 320, damping: 26 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl ring-1 ring-stone-200"
+            >
+              <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-emerald-50 ring-1 ring-emerald-200">
+                <img src={MASCOT} alt="" className="h-11 w-11 rounded-full object-cover" />
+              </div>
+              <h3 className="text-lg font-extrabold text-stone-900">{tr(FEEDBACK_TEXT.title)}</h3>
+              <p className="mx-auto mt-2 max-w-[18rem] text-sm leading-relaxed text-stone-600">
+                {tr(FEEDBACK_TEXT.body)}
+              </p>
+
+              <p className="mt-4 text-sm font-bold text-stone-800">{tr(FEEDBACK_TEXT.prompt)}</p>
+              <div className="mt-3 flex items-center justify-center gap-2">
+                {FEEDBACK_RATINGS.map((r) => (
+                  <button
+                    key={r.score}
+                    onClick={() => submitFeedback(r.score, true)}
+                    aria-label={`${r.score} / 5`}
+                    className={`grid h-11 w-11 place-items-center rounded-full text-2xl transition active:scale-95 ${
+                      selectedRating === r.score
+                        ? "bg-emerald-100 ring-2 ring-emerald-500"
+                        : "bg-stone-50 ring-1 ring-stone-200 hover:bg-emerald-50 hover:ring-emerald-300"
+                    }`}
+                  >
+                    {r.emoji}
+                  </button>
+                ))}
+              </div>
+
+              {feedbackSaved && (
+                <p className="mt-3 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                  {tr(FEEDBACK_TEXT.saved)}
+                </p>
+              )}
+
+              <div className="mt-5 flex items-center justify-center gap-3">
+                <button
+                  onClick={() => submitFeedback(selectedRating, true)}
+                  className="rounded-xl border border-red-300 px-5 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-50 active:scale-95"
+                >
+                  {tr(FEEDBACK_TEXT.confirm)}
+                </button>
+                <button
+                  onClick={() => setExitPrompt(false)}
+                  className="rounded-xl border border-stone-200 px-5 py-2.5 text-sm font-bold text-stone-600 transition hover:bg-stone-50 active:scale-95"
+                >
+                  {tr(FEEDBACK_TEXT.cancel)}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
