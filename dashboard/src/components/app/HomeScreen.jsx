@@ -19,11 +19,16 @@ import {
   MapPin,
   Share2,
   ChevronDown,
+  ThumbsUp,
+  ThumbsDown,
+  HelpCircle,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import SpeakButton from "./SpeakButton";
 import DiagnoseModal from "./DiagnoseModal";
 import ScanModal from "./ScanModal";
+import TopAction from "./TopAction";
+import { saveAlertFeedback } from "../../lib/feedback";
 import { weatherEmoji } from "../../lib/weather";
 import {
   getImpactStats,
@@ -44,8 +49,15 @@ function whenLabel(daysAhead, t) {
   return t("app.inDays").replace("{n}", daysAhead ?? 2);
 }
 
+// Farmer verification of an alert: yes / no / not sure.
+const VOTES = [
+  { id: "yes", icon: ThumbsUp, label: "home.voteYes" },
+  { id: "no", icon: ThumbsDown, label: "home.voteNo" },
+  { id: "unsure", icon: HelpCircle, label: "home.voteUnsure" },
+];
+
 export default function HomeScreen({ profile, weather, advisories }) {
-  const { t, tr } = useLang();
+  const { t, tr, lang } = useLang();
   const { alerts, crop, stage } = advisories;
   const cur = weather.current;
   const stats = getImpactStats();
@@ -53,6 +65,7 @@ export default function HomeScreen({ profile, weather, advisories }) {
   const [showScan, setShowScan] = useState(false);
   const [loc, setLoc] = useState(null);
   const [openWhy, setOpenWhy] = useState({});
+  const [votes, setVotes] = useState({});
   const [shareState, setShareState] = useState("");
 
   // Reverse-geocode the field GPS to a readable place name (free, no key).
@@ -69,6 +82,23 @@ export default function HomeScreen({ profile, weather, advisories }) {
     const r = await shareAdvisory(text);
     setShareState(r === "shared" ? t("home.shareDone") : r === "copied" ? t("home.shareCopied") : "");
     setTimeout(() => setShareState(""), 2500);
+  };
+
+  // Record the farmer's verdict on one alert (device-local, first answer wins).
+  const onVote = (key, alert, choice) => {
+    if (votes[key]) return;
+    setVotes((s) => ({ ...s, [key]: choice }));
+    saveAlertFeedback({
+      alertId: alert.id,
+      kind: alert.kind,
+      threatType: alert.threatType || null,
+      title: tr(alert.title),
+      daysAhead: alert.daysAhead ?? null,
+      crop: crop.id,
+      stage: stage.stageIndex ?? null,
+      lang,
+      vote: choice,
+    });
   };
 
   const fieldLabel = loc?.place
@@ -99,6 +129,9 @@ export default function HomeScreen({ profile, weather, advisories }) {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Today's single most important job */}
+      <TopAction alerts={alerts} profile={profile} weather={weather} />
+
       {/* GPS field location */}
       <div className="flex items-center gap-3 rounded-2xl bg-white border border-stone-200 px-4 py-3">
         <div className="w-10 h-10 shrink-0 rounded-xl bg-emerald-100 text-emerald-700 grid place-items-center">
@@ -196,6 +229,33 @@ export default function HomeScreen({ profile, weather, advisories }) {
                         </AnimatePresence>
                       </div>
                     )}
+
+                    {/* Was this alert correct? — device-local farmer feedback */}
+                    <div className="mt-3 h-px bg-black/10" />
+                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                      {votes[a.id + i] ? (
+                        <p className="inline-flex items-center gap-1.5 text-[11px] font-bold opacity-85">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          {t("home.thanksFeedback")}
+                        </p>
+                      ) : (
+                        <>
+                          <span className="text-[11px] font-bold opacity-80 mr-1">
+                            {t("home.alertCorrect")}
+                          </span>
+                          {VOTES.map((v) => (
+                            <button
+                              key={v.id}
+                              onClick={() => onVote(a.id + i, a, v.id)}
+                              className="inline-flex items-center gap-1 rounded-full bg-black/5 hover:bg-black/10 active:scale-95 transition px-2.5 py-1 text-[11px] font-bold"
+                            >
+                              <v.icon className="w-3 h-3" />
+                              {t(v.label)}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </motion.div>

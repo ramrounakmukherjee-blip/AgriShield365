@@ -196,6 +196,18 @@ const t = {
     inDays: { en: "in {n}d", hi: "{n} दिन में", bn: "{n} দিনে", mr: "{n} दिवसांत" },
     today: { en: "Today", hi: "आज", bn: "আজ", mr: "आज" },
     tomorrow: { en: "Tomorrow", hi: "कल", bn: "আগামীকাল", mr: "उद्या" },
+    offlineBanner: {
+      en: "Offline mode — alerts, the symptom checker and JalRakshak still work. Live weather resumes when you reconnect.",
+      hi: "ऑफ़लाइन मोड — चेतावनियाँ, लक्षण जाँच और जलरक्षक तब भी चलते हैं। कनेक्शन आने पर लाइव मौसम फिर शुरू होगा।",
+      bn: "অফলাইন মোড — সতর্কতা, লক্ষণ পরীক্ষক ও জলরক্ষক তখনও চলে। সংযোগ ফিরলে লাইভ আবহাওয়া আবার শুরু হবে।",
+      mr: "ऑफलाइन मोड — इशारे, लक्षण तपासक व जलरक्षक तरीही चालतात. कनेक्शन आल्यावर थेट हवामान पुन्हा सुरू होईल.",
+    },
+    backOnline: {
+      en: "Back online — live weather and market prices refreshed.",
+      hi: "फिर से ऑनलाइन — लाइव मौसम और मंडी भाव अपडेट हुए।",
+      bn: "আবার অনলাইন — লাইভ আবহাওয়া ও বাজারদর হালনাগাদ হয়েছে।",
+      mr: "पुन्हा ऑनलाइन — थेट हवामान व बाजारभाव अद्ययावत झाले.",
+    },
   },
 
   home: {
@@ -226,6 +238,25 @@ const t = {
     criticalStage: { en: "Critical water stage", hi: "संवेदनशील सिंचाई चरण", bn: "সংকটপূর্ণ সেচ পর্যায়", mr: "नाजूक सिंचन अवस्था" },
     impact: { en: "Why it matters", hi: "यह क्यों ज़रूरी है", bn: "কেন এটি গুরুত্বপূর্ণ", mr: "हे का महत्त्वाचे आहे" },
     noAlerts: { en: "No active alerts. Your field looks safe right now.", hi: "कोई सक्रिय चेतावनी नहीं। फ़िलहाल आपका खेत सुरक्षित है।", bn: "কোনো সক্রিয় সতর্কতা নেই। এই মুহূর্তে মাঠ নিরাপদ।", mr: "सक्रिय इशारा नाही. सध्या शेत सुरक्षित आहे." },
+    topAction: { en: "Today's top action", hi: "आज का मुख्य काम", bn: "আজকের প্রধান কাজ", mr: "आजचे मुख्य काम" },
+    weatherChip: { en: "Weather & disaster", hi: "मौसम व आपदा", bn: "আবহাওয়া ও দুর্যোগ", mr: "हवामान व आपत्ती" },
+    actClear: { en: "Field looks safe today", hi: "आज खेत सुरक्षित दिख रहा है", bn: "আজ মাঠ নিরাপদ দেখাচ্ছে", mr: "आज शेत सुरक्षित दिसते" },
+    actClearBody: {
+      en: "Walk your field once, check the lower leaves, and keep your alerts on — the shield is watching.",
+      hi: "एक बार खेत का चक्कर लगाएँ, नीचे के पत्ते देखें और चेतावनियाँ चालू रखें — ढाल निगरानी कर रही है।",
+      bn: "একবার মাঠ ঘুরে আসুন, নিচের পাতাগুলো দেখুন আর সতর্কতা চালু রাখুন — ঢাল নজর রাখছে।",
+      mr: "एकदा शेतात फिरा, खालची पाने पाहा आणि इशारे चालू ठेवा — ढाल लक्ष ठेवत आहे.",
+    },
+    alertCorrect: { en: "Was this alert correct?", hi: "क्या यह चेतावनी सही थी?", bn: "এই সতর্কতা কি ঠিক ছিল?", mr: "हा इशारा बरोबर होता का?" },
+    voteYes: { en: "Yes, right", hi: "हाँ, सही", bn: "হ্যাঁ, ঠিক", mr: "हो, बरोबर" },
+    voteNo: { en: "Not really", hi: "नहीं, ग़लत", bn: "না, ঠিক নয়", mr: "नाही, चुकीचा" },
+    voteUnsure: { en: "Not sure", hi: "पता नहीं", bn: "নিশ্চিত নই", mr: "माहीत नाही" },
+    thanksFeedback: {
+      en: "Thank you — noted on this device 🙏",
+      hi: "धन्यवाद — इसी डिवाइस पर दर्ज 🙏",
+      bn: "ধন্যবাদ — এই ডিভাইসেই নথিভুক্ত 🙏",
+      mr: "धन्यवाद — याच डिव्हाइसवर नोंदले 🙏",
+    },
   },
 
   forecast: {
@@ -251,6 +282,36 @@ const t = {
     waterPlan: { en: "4-day water plan", hi: "4 दिन की सिंचाई योजना", bn: "৪ দিনের সেচ পরিকল্পনা", mr: "4 दिवसांची सिंचन योजना" },
     skipped: { en: "Skip — rain", hi: "टालें — बारिश", bn: "বাদ — বৃষ্টি", mr: "वगळा — पाऊस" },
     criticalNote: { en: "Your crop is in its most water-sensitive stage — missing irrigation now causes the highest yield loss.", hi: "आपकी फसल सबसे संवेदनशील पानी चरण में है — अभी सिंचाई छूटी तो उपज का सबसे ज़्यादा नुक़सान।", bn: "আপনার ফসল সবচেয়ে জল-সংবেদনশীল পর্যায়ে — এখন সেচ বাদ পড়লে ফলনের সবচেয়ে বেশি ক্ষতি।", mr: "तुमचे पीक सर्वात नाजूक पाणी अवस्थेत आहे — आता सिंचन सुटल्यास उत्पादनाचे सर्वाधिक नुकसान." },
+    savedTitle: {
+      en: "Water you save with this plan",
+      hi: "इस योजना से बचत वाला पानी",
+      bn: "এই পরিকল্পনায় আপনি যত জল বাঁচাচ্ছেন",
+      mr: "या योजनेतून वाचणारे पाणी",
+    },
+    savedWeek: {
+      en: "saved this week on your {area} acre field — by skipping rain-covered days and using your irrigation method",
+      hi: "इस हफ़्ते आपके {area} एकड़ खेत पर बचा — बारिश वाले दिन छोड़ने और आपकी सिंचाई विधि से",
+      bn: "এই সপ্তাহে আপনার {area} একর মাঠে সাশ্রয় — বৃষ্টির দিন বাদ দিয়ে ও আপনার সেচ পদ্ধতিতে",
+      mr: "या आठवड्यात तुमच्या {area} एकर शेतावर वाचले — पावसाचे दिवस वगळून व तुमच्या सिंचन पद्धतीने",
+    },
+    savedRain: {
+      en: "≈ {l} L saved by skipping rain-covered days",
+      hi: "≈ {l} लीटर बारिश वाले दिन छोड़कर बचा",
+      bn: "≈ {l} লিটার বৃষ্টির দিন বাদ দিয়ে সাশ্রয়",
+      mr: "≈ {l} लिटर पावसाचे दिवस वगळून वाचले",
+    },
+    savedMethod: {
+      en: "≈ {l} L saved because {method} needs less water than flood irrigation",
+      hi: "≈ {l} लीटर बचा क्योंकि {method} में बाढ़-सिंचाई से कम पानी लगता है",
+      bn: "≈ {l} লিটার সাশ্রয় কারণ {method}-এ প্লাবন সেচের চেয়ে কম জল লাগে",
+      mr: "≈ {l} लिटर वाचले कारण {method} मध्ये पूर-सिंचनापेक्षा कमी पाणी लागते",
+    },
+    savedNote: {
+      en: "Estimate based on FAO-56 crop water needs, today's Kc = {kc}, and your irrigation method's efficiency.",
+      hi: "यह अनुमान FAO-56 फसल पानी ज़रूरत, आज का Kc = {kc} और आपकी सिंचाई विधि की क्षमता पर आधारित है।",
+      bn: "এই হিসাব FAO-56 ফসলের জল চাহিদা, আজকের Kc = {kc} ও আপনার সেচ পদ্ধতির দক্ষতার ভিত্তিতে।",
+      mr: "हा अंदाज FAO-56 पिकाची पाणी गरज, आजचा Kc = {kc} व तुमच्या सिंचन पद्धतीच्या कार्यक्षमतेवर आधारित आहे.",
+    },
   },
 
   market: {
@@ -313,6 +374,17 @@ const t = {
     cardSub: { en: "Point your camera at a leaf — AI spots blight, blast, pests & more.", hi: "पत्ती पर कैमरा लगाएं — AI ब्लाइट, ब्लास्ट, कीट आदि पहचानता है।", bn: "পাতার দিকে ক্যামেরা তাক করুন — AI ব্লাইট, ব্লাস্ট, পোকা ইত্যাদি চেনে।", mr: "पानावर कॅमेरा धरा — AI ब्लाइट, ब्लास्ट, कीडे ओळखतो." },
     cardCta: { en: "Scan", hi: "स्कैन", bn: "স্ক্যান", mr: "स्कॅन" },
     title: { en: "AI leaf disease scan", hi: "AI पत्ती रोग स्कैन", bn: "AI পাতা রোগ স্ক্যান", mr: "AI पान रोग स्कॅन" },
+    tipsTitle: { en: "Photo tips for a better result", hi: "बेहतर नतीजे के लिए फ़ोटो टिप्स", bn: "ভালো ফলাফলের জন্য ছবির টিপস", mr: "उत्तम निकालासाठी फोटो टिप्स" },
+    tip1: { en: "Shoot in daylight — avoid flash glare", hi: "दिन की रोशनी में फ़ोटो लें — फ़्लैश की चमक से बचें", bn: "দিনের আলোয় ছবি তুলুন — ফ্ল্যাশের ঝলক এড়ান", mr: "दिवसाच्या उजेडात फोटो घ्या — फ्लॅशची झळ टाळा" },
+    tip2: { en: "One affected leaf, filling the frame", hi: "एक प्रभावित पत्ती, फ़्रेम में पूरी", bn: "একটি আক্রান্ত পাতা, ফ্রেমে পুরোটা", mr: "एक बाधित पान, फ्रेममध्ये पूर्ण" },
+    tip3: { en: "Include the spots or damaged area clearly", hi: "धब्बे या खराब हिस्सा साफ़ दिखे", bn: "দাগ বা ক্ষতিগ্রস্ত অংশ স্পষ্ট দেখান", mr: "डाग किंवा खराब भाग स्पष्ट दिसावा" },
+    tip4: { en: "Keep hands and shadows out of the photo", hi: "फ़ोटो में हाथ और परछाईं न आए", bn: "ছবিতে হাত ও ছায়া যেন না পড়ে", mr: "फोटोत हात व सावली नसावी" },
+    lowConfidence: {
+      en: "Low confidence — take a closer, clearer photo in daylight, or cross-check with the offline symptom checker below.",
+      hi: "कम विश्वास — दिन की रोशनी में और करीब से साफ़ फ़ोटो लें, या नीचे ऑफ़लाइन लक्षण जाँच से मिलाएँ।",
+      bn: "কম নিশ্চয়তা — দিনের আলোয় আরও কাছ থেকে স্পষ্ট ছবি তুলুন, বা নিচের অফলাইন লক্ষণ পরীক্ষক দিয়ে মিলিয়ে নিন।",
+      mr: "कमी विश्वास — दिवसाच्या उजेडात अधिक जवळून स्पष्ट फोटो घ्या, किंवा खालील ऑफलाइन लक्षण तपासकाशी पडताळा.",
+    },
     subtitle: { en: "Powered by Google Gemini", hi: "Google Gemini द्वारा संचालित", bn: "Google Gemini দ্বারা চালিত", mr: "Google Gemini द्वारा चालित" },
     instructions: { en: "Take a clear, close-up photo of a single affected leaf in daylight.", hi: "दिन की रोशनी में एक प्रभावित पत्ती की साफ़ करीब से फ़ोटो लें।", bn: "দিনের আলোয় একটি আক্রান্ত পাতার পরিষ্কার কাছ থেকে ছবি তুলুন।", mr: "दिवसउजेडात एका बाधित पानाचा स्पष्ट जवळून फोटो घ्या." },
     takePhoto: { en: "Take photo", hi: "फ़ोटो लें", bn: "ছবি তুলুন", mr: "फोटो काढा" },
@@ -330,6 +402,50 @@ const t = {
     unavailableTitle: { en: "AI scan is a premium feature", hi: "AI स्कैन एक प्रीमियम सुविधा है", bn: "AI স্ক্যান একটি প্রিমিয়াম ফিচার", mr: "AI स्कॅन हे प्रीमियम वैशिष्ट्य आहे" },
     offlineHint: { en: "The AI scan service rejected the request as it is a premium feature. Check your connection and try again — or use the offline symptom checker below.", hi: "AI स्कैन सेवा ने अनुरोध अस्वीकार कर दिया क्योंकि यह एक प्रीमियम सुविधा है। कनेक्शन जाँचकर फिर कोशिश करें — या नीचे ऑफ़लाइन लक्षण जाँच का उपयोग करें।", bn: "AI স্ক্যান পরিষেবাটি অনুরোধ প্রত্যাখ্যান করেছে কারণ এটি একটি প্রিমিয়াম ফিচার। সংযোগ যাচাই করে আবার চেষ্টা করুন — অথবা নিচের অফলাইন লক্ষণ পরীক্ষক ব্যবহার করুন।", mr: "AI स्कॅन सेवेने विनंती नाकारली कारण हे प्रीमियम वैशिष्ट्य आहे. कनेक्शन तपासून पुन्हा प्रयत्न करा — किंवा खाली ऑफलाइन लक्षण तपासक वापरा." },
     error: { en: "Couldn't reach the AI scan service — it is a premium feature and the service rejected the request. Check your connection and try again, or use the offline symptom checker below.", hi: "AI स्कैन सेवा तक नहीं पहुँच सके — यह एक प्रीमियम सुविधा है और सेवा ने अनुरोध अस्वीकार कर दिया। कनेक्शन जाँचकर फिर कोशिश करें, या नीचे ऑफ़लाइन लक्षण जाँच उपयोग करें।", bn: "AI স্ক্যান পরিষেবায় পৌঁছানো যায়নি — এটি একটি প্রিমিয়াম ফিচার এবং পরিষেবাটি অনুরোধ প্রত্যাখ্যান করেছে। সংযোগ যাচাই করে আবার চেষ্টা করুন, অথবা নিচের অফলাইন লক্ষণ পরীক্ষক ব্যবহার করুন।", mr: "AI स्कॅन सेवेपर्यंत पोहोचता आले नाही — हे प्रीमियम वैशिष्ट्य आहे आणि सेवेने विनंती नाकारली. कनेक्शन तपासून पुन्हा प्रयत्न करा, किंवा खाली ऑफलाइन लक्षण तपासक वापरा." },
+  },
+
+  // ---- About / credits ----
+  about: {
+    title: { en: "About this app", hi: "इस ऐप के बारे में", bn: "এই অ্যাপ সম্পর্কে", mr: "या अ‍ॅपबद्दल" },
+    tagline: {
+      en: "Every Farmer, Every Season, Protected",
+      hi: "हर किसान, हर मौसम, सुरक्षित",
+      bn: "প্রতিটি কৃষক, প্রতিটি ঋতু, সুরক্ষিত",
+      mr: "प्रत्येक शेतकरी, प्रत्येक हंगाम, सुरक्षित",
+    },
+    event: { en: "SIH 2026", hi: "SIH 2026", bn: "SIH 2026", mr: "SIH 2026" },
+    ps: { en: "SIH26131 · Software", hi: "SIH26131 · सॉफ़्टवेयर", bn: "SIH26131 · সফটওয়্যার", mr: "SIH26131 · सॉफ्टवेअर" },
+    hardwareChip: {
+      en: "AgriShield EDGE · 26180",
+      hi: "AgriShield EDGE · 26180",
+      bn: "AgriShield EDGE · 26180",
+      mr: "AgriShield EDGE · 26180",
+    },
+    line: {
+      en: "Early detection and management of crop diseases and pest infestations — with weather-risk forecasting, a JalRakshak water plan, market prices and advisories in your own language.",
+      hi: "फसल रोगों और कीट संक्रमण की शुरुआती पहचान और प्रबंधन — मौसम-जोखिम पूर्वानुमान, जलरक्षक जल योजना, मंडी भाव और आपकी भाषा में सलाह के साथ।",
+      bn: "ফসলের রোগ ও পোকার আক্রমণ আগে থেকেই শনাক্ত ও নিয়ন্ত্রণ — আবহাওয়া-ঝুঁকির পূর্বাভাস, জলরক্ষক জল পরিকল্পনা, বাজারদর ও আপনার ভাষায় পরামর্শ সহ।",
+      mr: "पीकरोग व कीड संसर्गाची लवकर ओळख आणि व्यवस्थापन — हवामान-धोका अंदाज, जलरक्षक पाणी योजना, बाजारभाव व तुमच्या भाषेत सल्ला.",
+    },
+    hardware: {
+      en: "Hardware companion: AgriShield EDGE (PS 26180) — a field-deployable edge-AI smart farming assistant for farms with weak connectivity.",
+      hi: "साथी हार्डवेयर: AgriShield EDGE (PS 26180) — कमज़ोर कनेक्टिविटी वाले खेतों के लिए फ़ील्ड में लगने वाला एज-AI स्मार्ट सहायक।",
+      bn: "সঙ্গী হার্ডওয়্যার: AgriShield EDGE (PS 26180) — দুর্বল সংযোগের মাঠের জন্য মাঠে বসানো এজ-AI স্মার্ট সহায়ক।",
+      mr: "सोबती हार्डवेअर: AgriShield EDGE (PS 26180) — कमकुवत कनेक्टिव्हिटी असलेल्या शेतांसाठी क्षेत्रात बसवता येणारा एज-AI स्मार्ट सहाय्यक.",
+    },
+    team: { en: "Built by Team RAVEN ROOTS", hi: "टीम RAVEN ROOTS द्वारा निर्मित", bn: "টিম RAVEN ROOTS তৈরি", mr: "टीम RAVEN ROOTS निर्मित" },
+    madeWith: {
+      en: "Designed and built in India for Bharat's farmers — local-first, offline-ready and free of cost for the farmer.",
+      hi: "भारत के किसानों के लिए भारत में बनाया गया — लोकल-फ़र्स्ट, ऑफ़लाइन-तैयार और किसान के लिए निःशुल्क।",
+      bn: "ভারতের কৃষকদের জন্য ভারতে তৈরি — লোকাল-ফার্স্ট, অফলাইন-প্রস্তুত এবং কৃষকের জন্য বিনামূল্যে।",
+      mr: "भारतातील शेतकऱ्यांसाठी भारतात तयार — लोकल-फर्स्ट, ऑफलाइन-सज्ज आणि शेतकऱ्यासाठी विनामूल्य.",
+    },
+    observations: {
+      en: "{n} field observation(s) saved on this device — private to you, and used to improve future advisories.",
+      hi: "इस डिवाइस पर {n} फ़ील्ड अवलोकन सहेजे गए — सिर्फ़ आपके पास, और आगे की सलाह सुधारने के लिए।",
+      bn: "এই ডিভাইসে {n}টি মাঠ-পর্যবেক্ষণ সংরক্ষিত — শুধু আপনার কাছে, এবং ভবিষ্যতের পরামর্শ উন্নত করতে ব্যবহৃত।",
+      mr: "या डिव्हाइसवर {n} शेत-निरीक्षणे जतन — फक्त तुमच्याकडे, आणि पुढील सल्ला सुधारण्यासाठी.",
+    },
   },
 };
 

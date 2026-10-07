@@ -8,6 +8,7 @@ import { getForecast, getAdvisories, recordAdvisoryHistory, cloudSyncAdvisory } 
 import { getSeason } from "../../lib/agri";
 import Loading from "./Loading";
 import AgriSaathi from "./AgriSaathi";
+import OfflineBanner from "./OfflineBanner";
 import HomeScreen from "./HomeScreen";
 import ForecastScreen from "./ForecastScreen";
 import IrrigationScreen from "./IrrigationScreen";
@@ -115,6 +116,9 @@ export default function AppShell({ profile, onSignOut, onProfileChange, onResetS
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-5">
+        {/* Offline-first reassurance — the advisory engine runs on-device */}
+        <OfflineBanner />
+
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}

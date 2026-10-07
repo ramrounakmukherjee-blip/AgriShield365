@@ -1,15 +1,45 @@
-import { Droplets, CheckCircle2, CloudRain, AlertTriangle } from "lucide-react";
+import { Droplets, CheckCircle2, CloudRain, AlertTriangle, Leaf } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import { getIrrigation } from "../../lib/api";
+import { IRRIGATION_EFFICIENCY, SOIL_FACTOR, IRRIGATION_TYPES } from "../../lib/agri";
 import { shortDate } from "../../lib/weather";
 
 const LOCALE = { en: "en-IN", hi: "hi-IN", bn: "bn-IN", mr: "mr-IN" };
+
+// 1 mm of water over 1 acre ≈ 4047 litres
+const LITRES_PER_MM_ACRE = 4047;
 
 export default function IrrigationScreen({ profile, weather }) {
   const { t, tr, lang } = useLang();
   const loc = LOCALE[lang] || "en-IN";
   const data = getIrrigation(profile, weather);
   const rec = data.today;
+
+  // Water saved by following this plan instead of watering by habit:
+  //  • rain-covered days: nothing is applied at all
+  //  • irrigated days: an efficient method needs less water than flood
+  const eff = IRRIGATION_EFFICIENCY[profile.irrigation] ?? 0.9;
+  const soil = SOIL_FACTOR[profile.soil] ?? 1.0;
+  const area = Number(profile.area) || 1;
+  const savings = data.plan.reduce(
+    (acc, d, i) => {
+      const cropNeed = data.kc * (weather.daily[i]?.et0 ?? 0); // mm the crop needs
+      const mine = (cropNeed / eff) * soil;
+      if (d.skip) {
+        acc.rain += mine;
+      } else if (profile.irrigation !== "rainfed" && eff > 0.55) {
+        // Rainfed fields are not irrigated at all, so there is nothing to compare.
+        acc.method += (cropNeed / 0.55) * soil - mine;
+      }
+      return acc;
+    },
+    { rain: 0, method: 0 }
+  );
+  const savedRainL = Math.round(savings.rain * LITRES_PER_MM_ACRE * area);
+  const savedMethodL = Math.round(Math.max(0, savings.method) * LITRES_PER_MM_ACRE * area);
+  const savedTotalL = savedRainL + savedMethodL;
+  const method = IRRIGATION_TYPES.find((m) => m.id === profile.irrigation);
+  const fmt = (n) => n.toLocaleString("en-IN");
 
   return (
     <div className="flex flex-col gap-5">
@@ -65,6 +95,44 @@ export default function IrrigationScreen({ profile, weather }) {
           </div>
         )}
       </div>
+
+      {/* Water saved by following the plan (vs watering by habit) */}
+      {savedTotalL > 0 && (
+        <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-4 sm:p-5">
+          <div className="flex items-center gap-2 text-emerald-900">
+            <Leaf className="w-4 h-4 shrink-0" />
+            <p className="text-xs font-extrabold uppercase tracking-wider">
+              {t("irrigation.savedTitle")}
+            </p>
+          </div>
+          <p className="mt-2 text-3xl font-extrabold text-emerald-800">
+            ≈ {fmt(savedTotalL)}
+            <span className="text-sm font-bold ml-1.5">L</span>
+          </p>
+          <p className="text-xs text-emerald-900/90 font-semibold mt-1">
+            {t("irrigation.savedWeek").replace("{area}", area)}
+          </p>
+          <ul className="mt-3 flex flex-col gap-1.5 text-xs font-semibold text-emerald-900">
+            {savedRainL > 0 && (
+              <li className="flex items-start gap-2">
+                <CloudRain className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                {t("irrigation.savedRain").replace("{l}", fmt(savedRainL))}
+              </li>
+            )}
+            {savedMethodL > 0 && method && (
+              <li className="flex items-start gap-2">
+                <Droplets className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                {t("irrigation.savedMethod")
+                  .replace("{l}", fmt(savedMethodL))
+                  .replace("{method}", tr(method))}
+              </li>
+            )}
+          </ul>
+          <p className="mt-3 text-[11px] text-emerald-900/80 leading-snug border-t border-emerald-200 pt-2">
+            {t("irrigation.savedNote").replace("{kc}", data.kc)}
+          </p>
+        </div>
+      )}
 
       {/* 4-day plan */}
       <div className="bg-white rounded-2xl border border-stone-200 p-4 sm:p-5">

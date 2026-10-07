@@ -11,6 +11,8 @@ import {
   ImageOff,
   RefreshCw,
   Stethoscope,
+  Lightbulb,
+  Sun,
 } from "lucide-react";
 import { useLang } from "../../lib/useLang";
 import { scanLeaf, fileToScaledDataUrl, wakeScanBackend } from "../../lib/api";
@@ -118,6 +120,25 @@ export default function ScanModal({ crop, onClose }) {
                 <Leaf className="w-10 h-10 text-emerald-600" />
               </div>
               <p className="text-sm text-stone-600 max-w-xs leading-relaxed">{t("scan.instructions")}</p>
+
+              {/* Photo quality guidance — helps the AI read the leaf correctly */}
+              <div className="w-full rounded-2xl border border-emerald-200 bg-emerald-50 p-3.5 text-left">
+                <p className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-800">
+                  <Lightbulb className="w-3.5 h-3.5" /> {t("scan.tipsTitle")}
+                </p>
+                <ul className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  {["scan.tip1", "scan.tip2", "scan.tip3", "scan.tip4"].map((k) => (
+                    <li
+                      key={k}
+                      className="flex items-start gap-1.5 text-[12px] font-medium text-emerald-900 leading-snug"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-600" />
+                      {t(k)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               <input
                 ref={fileRef}
                 type="file"
@@ -194,6 +215,15 @@ export default function ScanModal({ crop, onClose }) {
                   />
                 </div>
               </div>
+
+              {typeof result.confidence === "number" &&
+                result.confidence > 0 &&
+                result.confidence < 60 && (
+                  <p className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-xs font-medium text-amber-900 leading-snug">
+                    <Sun className="w-4 h-4 mt-0.5 shrink-0" />
+                    {t("scan.lowConfidence")}
+                  </p>
+                )}
 
               {result.summary && (
                 <p className="text-sm text-stone-700 leading-relaxed bg-white rounded-2xl border border-stone-200 p-3.5">
